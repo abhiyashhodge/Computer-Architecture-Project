@@ -140,6 +140,15 @@ class MemCmd
         HTMReq,
         HTMReqResp,
         HTMAbort,
+        /* [Revice] New commands */
+        ReadSpecReq,
+        ReadSpecResp,
+        ValidateReq,
+        ValidateResp,
+        ExposeReq,
+        ExposeResp,
+        SpecFlushReq,
+        SpecFlushResp,
         NUM_MEM_CMDS
     };
 
@@ -167,6 +176,11 @@ class MemCmd
         IsPrint,        //!< Print state matching address (for debugging)
         IsFlush,        //!< Flush the address from caches
         FromCache,      //!< Request originated from a caching agent
+        /* [Revice] New attributes */
+        IsSpec,         //!< Speculatively issued
+        IsValidate,
+        IsExpose,
+        IsSpecFlush,
         NUM_COMMAND_ATTRIBUTES
     };
 
@@ -246,6 +260,11 @@ class MemCmd
     bool isError() const        { return testCmdAttrib(IsError); }
     bool isPrint() const        { return testCmdAttrib(IsPrint); }
     bool isFlush() const        { return testCmdAttrib(IsFlush); }
+    // [Revice] New attributes
+    bool isSpec() const         { return testCmdAttrib(IsSpec); }
+    bool isValidate() const     { return testCmdAttrib(IsValidate); }
+    bool isExpose() const       { return testCmdAttrib(IsExpose); }
+    bool isSpecFlush() const    { return testCmdAttrib(IsSpecFlush); }
 
     bool
     isDemand() const
@@ -350,6 +369,16 @@ class Packet : public Printable
         // Signal block present to squash prefetch and cache evict packets
         // through express snoop flag
         BLOCK_CACHED          = 0x00010000
+
+        // [Revice] ReadSpecReq was L1 hit.
+        L1_HIT                = 0x00020000,
+
+        // [Revice] this packet is the first one of split packets
+        // maximum split is 2
+        FIRST_IN_SPLIT              = 0x00040000,
+        ONLY_ACCESS_SPEC_BUFF       = 0x00080000,
+
+        EXTERNAL_EVICTION = 0x00100000,
     };
 
     Flags flags;
@@ -436,6 +465,12 @@ class Packet : public Printable
      * relative, a 32-bit unsigned should be sufficient.
      */
     uint32_t payloadDelay;
+
+    // [Revice] indicate the source buffer entry
+    // if the load should get data from specbuffer
+    int srcIdx;
+    int reqIdx;
+    bool isSplit;
 
     /**
      * A virtual base opaque structure used to hold state associated
@@ -615,6 +650,44 @@ class Packet : public Printable
     {
         return (cmd == MemCmd::WriteReq || cmd == MemCmd::WriteLineReq) &&
             getOffset(blk_size) == 0 && getSize() == blk_size;
+    }
+
+    /// [Revice] Flags
+    bool isSpec() const              { return cmd.isSpec(); }
+    bool isValidate() const          { return cmd.isValidate(); }
+    bool isExpose() const            { return cmd.isExpose(); }
+    bool isSpecFlush() const         { return cmd.isSpecFlush(); }
+    bool isL1Hit() const             { return flags.isSet(L1_HIT); }
+    bool isExternalEviction() const  { return flags.isSet(EXTERNAL_EVICTION); }
+    // [Revice] Check whether it is the first in split packets
+    bool isFirst() const             { return flags.isSet(FIRST_IN_SPLIT); }
+    bool onlyAccessSpecBuff() const
+        { return flags.isSet(ONLY_ACCESS_SPEC_BUFF); }
+
+    void setL1Hit()
+    {
+        assert(isSpec());
+        assert(!flags.isSet(L1_HIT));
+        flags.set(L1_HIT);
+    }
+
+    void setExternalEviction()
+    {
+        assert(!flags.isSet(EXTERNAL_EVICTION));
+        flags.set(EXTERNAL_EVICTION);
+    }
+
+    void setOnlyAccessSpecBuff()
+    {
+        assert(isSpec());
+        assert(!flags.isSet(ONLY_ACCESS_SPEC_BUFF));
+        flags.set(ONLY_ACCESS_SPEC_BUFF);
+    }
+
+    void setFirst()
+    {
+        assert(!flags.isSet(FIRST_IN_SPLIT));
+        flags.set(FIRST_IN_SPLIT);
     }
 
     //@{
@@ -1013,6 +1086,31 @@ class Packet : public Printable
     createWrite(const RequestPtr &req)
     {
         return new Packet(req, makeWriteCmd(req));
+    }
+
+    // [Revice] Methods that return Packets for Revice.
+    static PacketPtr
+    createReadSpec(const RequestPtr req)
+    {
+        return new Packet(req, MemCmd::ReadSpecReq);
+    }
+
+    static PacketPtr
+    createValidate(const RequestPtr req)
+    {
+        return new Packet(req, MemCmd::ValidateReq);
+    }
+
+    static PacketPtr
+    createExpose(const RequestPtr req)
+    {
+        return new Packet(req, MemCmd::ExposeReq);
+    }
+
+    static PacketPtr
+    createSpecFlush(const RequestPtr req)
+    {
+        return new Packet(req, MemCmd::SpecFlushReq);
     }
 
     /**
