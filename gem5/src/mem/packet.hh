@@ -168,6 +168,7 @@ class MemCmd
         IsPrint,        //!< Print state matching address (for debugging)
         IsFlush,        //!< Flush the address from caches
         FromCache,      //!< Request originated from a caching agent
+        IsSpec,         //!< [Revice] new attribute for speculative read
         NUM_COMMAND_ATTRIBUTES
     };
 
@@ -214,7 +215,7 @@ class MemCmd
     }
 
   public:
-  
+
     bool isRead() const            { return testCmdAttrib(IsRead); }
     bool isWrite() const           { return testCmdAttrib(IsWrite); }
     bool isUpgrade() const         { return testCmdAttrib(IsUpgrade); }
