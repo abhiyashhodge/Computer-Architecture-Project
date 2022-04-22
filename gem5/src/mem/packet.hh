@@ -140,6 +140,7 @@ class MemCmd
         HTMReq,
         HTMReqResp,
         HTMAbort,
+        ReadSpecReq, // [Revice] new command
         NUM_MEM_CMDS
     };
 
@@ -167,7 +168,6 @@ class MemCmd
         IsPrint,        //!< Print state matching address (for debugging)
         IsFlush,        //!< Flush the address from caches
         FromCache,      //!< Request originated from a caching agent
-        IsSpec,         //!< Speculative access
         NUM_COMMAND_ATTRIBUTES
     };
 
@@ -214,13 +214,7 @@ class MemCmd
     }
 
   public:
-
-    // [Revice] Used to set IsSpec
-    void setCmdAttribSpec()
-    {
-        commandInfo[cmd].attributes |= (1ULL << Attribute::IsSpec);
-    }
-
+  
     bool isRead() const            { return testCmdAttrib(IsRead); }
     bool isWrite() const           { return testCmdAttrib(IsWrite); }
     bool isUpgrade() const         { return testCmdAttrib(IsUpgrade); }
@@ -993,6 +987,12 @@ class Packet : public Printable
             return MemCmd::ReadReq;
     }
 
+    static MemCmd
+    makeReadSpecCmd(const RequestPtr &req)
+    {
+        return MemCmd::ReadSpecReq;
+    }
+
     /**
      * Generate the appropriate write MemCmd based on the Request flags.
      */
@@ -1021,6 +1021,12 @@ class Packet : public Printable
     createRead(const RequestPtr &req)
     {
         return new Packet(req, makeReadCmd(req));
+    }
+
+    static PacketPtr 
+    createReadSpec(const RequestPtr &req)
+    {
+        return new Packet(req, makeReadSpecCmd(req));
     }
 
     static PacketPtr

@@ -1158,10 +1158,16 @@ LSQ::SingleDataRequest::buildPackets()
 {
     /* Retries do not create new packets. */
     if (_packets.size() == 0) {
-        _packets.push_back(
-                isLoad()
-                    ?  Packet::createRead(req())
-                    :  Packet::createWrite(req()));
+        // [Revice] change type of packet pushed based on spec/non-spec
+        if(isLoad()){
+            if(_inst->isNonSpeculative()){
+                _packets.push_back(Packet::createRead(req()));
+            } else {
+                _packets.push_back(Packet::createReadSpec(req()));
+            }
+        } else {
+            _packets.push_back(Packet::createWrite(req())));
+        }
         _packets.back()->dataStatic(_inst->memData);
         _packets.back()->senderState = this;
         
