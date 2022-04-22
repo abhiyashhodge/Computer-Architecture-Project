@@ -218,7 +218,7 @@ class MemCmd
     // [Revice] Used to set IsSpec
     void setCmdAttribSpec()
     {
-        commandInfo[cmd].attributes[Attribute::IsSpec] = 1;
+        commandInfo[cmd].attributes |= (1ULL << Attribute::IsSpec);
     }
 
     bool isRead() const            { return testCmdAttrib(IsRead); }
