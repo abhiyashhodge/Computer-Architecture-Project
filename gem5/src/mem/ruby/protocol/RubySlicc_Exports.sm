@@ -179,6 +179,7 @@ enumeration(RubyRequestType, desc="...", default="RubyRequestType_NULL") {
   Release,           desc="Release operation";
   Acquire,           desc="Acquire opertion";
   AcquireRelease,    desc="Acquire and Release opertion";
+  SPEC_LD,           desc="Speculative load";
   HTM_Start,         desc="hardware memory transaction: begin";
   HTM_Commit,        desc="hardware memory transaction: commit";
   HTM_Cancel,        desc="hardware memory transaction: cancel";

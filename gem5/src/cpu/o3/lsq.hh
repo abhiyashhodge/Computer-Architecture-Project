@@ -220,7 +220,7 @@ class LSQ
             WritebackScheduled  = 0x00001000,
             WritebackDone       = 0x00002000,
             /** True if this is an atomic request */
-            IsAtomic            = 0x00004000
+            IsAtomic            = 0x00004000,
             /** True if this is a speculative request */
             IsSpec              = 0x00008000
         };
