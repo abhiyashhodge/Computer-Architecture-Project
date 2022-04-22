@@ -1164,6 +1164,13 @@ LSQ::SingleDataRequest::buildPackets()
                     :  Packet::createWrite(req()));
         _packets.back()->dataStatic(_inst->memData);
         _packets.back()->senderState = this;
+        
+        
+        // [Revice] If spec, set the mem command
+        if(isLoad() && !_inst->isNonSpeculative()){
+            _packets.back()->cmd.setCmdAttribSpec();
+        }
+
 
         // hardware transactional memory
         // If request originates in a transaction (not necessarily a HtmCmd),
@@ -1196,6 +1203,11 @@ LSQ::SplitDataRequest::buildPackets()
         if (isLoad()) {
             _mainPacket = Packet::createRead(_mainReq);
             _mainPacket->dataStatic(_inst->memData);
+
+            // [Revice] If spec, set the mem command
+            if(!_inst->isNonSpeculative()){
+                _packets.back()->cmd.setCmdAttribSpec();
+            }
 
             // hardware transactional memory
             // If request originates in a transaction,

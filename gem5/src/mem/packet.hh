@@ -215,6 +215,12 @@ class MemCmd
 
   public:
 
+    // [Revice] Used to set IsSpec
+    void setCmdAttribSpec()
+    {
+        commandInfo[cmd].attributes[Attribute::IsSpec] = 1;
+    }
+
     bool isRead() const            { return testCmdAttrib(IsRead); }
     bool isWrite() const           { return testCmdAttrib(IsWrite); }
     bool isUpgrade() const         { return testCmdAttrib(IsUpgrade); }
@@ -1010,7 +1016,8 @@ class Packet : public Printable
      * Constructor-like methods that return Packets based on Request objects.
      * Fine-tune the MemCmd type if it's not a vanilla read or write.
      */
-    static PacketPtr
+    // [Revice] issued during a Load
+    static PacketPtr 
     createRead(const RequestPtr &req)
     {
         return new Packet(req, makeReadCmd(req));

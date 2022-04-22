@@ -249,6 +249,7 @@ class LSQ
         const DynInstPtr _inst;
         uint32_t _taskId;
         PacketDataPtr _data;
+        // [Revice] Where packets are stored by the request for sending
         std::vector<PacketPtr> _packets;
         std::vector<RequestPtr> _reqs;
         std::vector<Fault> _fault;
