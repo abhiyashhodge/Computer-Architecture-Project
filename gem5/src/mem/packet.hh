@@ -167,6 +167,7 @@ class MemCmd
         IsPrint,        //!< Print state matching address (for debugging)
         IsFlush,        //!< Flush the address from caches
         FromCache,      //!< Request originated from a caching agent
+        IsSpec,         //!< Speculative access
         NUM_COMMAND_ATTRIBUTES
     };
 
@@ -246,6 +247,9 @@ class MemCmd
     bool isError() const        { return testCmdAttrib(IsError); }
     bool isPrint() const        { return testCmdAttrib(IsPrint); }
     bool isFlush() const        { return testCmdAttrib(IsFlush); }
+
+    // [Revice]
+    bool isSpec() const         { return testCmdAttrib(IsSpec); }
 
     bool
     isDemand() const
@@ -610,6 +614,9 @@ class Packet : public Printable
     bool isError() const             { return cmd.isError(); }
     bool isPrint() const             { return cmd.isPrint(); }
     bool isFlush() const             { return cmd.isFlush(); }
+
+    // [Revice]
+    bool isSpec() const              { return cmd.isSpec(); }
 
     bool isWholeLineWrite(unsigned blk_size)
     {

@@ -221,6 +221,8 @@ class LSQ
             WritebackDone       = 0x00002000,
             /** True if this is an atomic request */
             IsAtomic            = 0x00004000
+            /** True if this is a speculative request */
+            IsSpec              = 0x00008000
         };
         FlagsType flags;
 
@@ -260,8 +262,8 @@ class LSQ
 
       protected:
         LSQUnit* lsqUnit() { return &_port; }
-        LSQRequest(LSQUnit* port, const DynInstPtr& inst, bool isLoad);
-        LSQRequest(LSQUnit* port, const DynInstPtr& inst, bool isLoad,
+        LSQRequest(LSQUnit* port, const DynInstPtr& inst, bool isLoad, bool isSpec);
+        LSQRequest(LSQUnit* port, const DynInstPtr& inst, bool isLoad, bool isSpec,
                 const Addr& addr, const uint32_t& size,
                 const Request::Flags& flags_, PacketDataPtr data=nullptr,
                 uint64_t* res=nullptr, AtomicOpFunctorPtr amo_op=nullptr);
@@ -270,6 +272,12 @@ class LSQ
         isLoad() const
         {
             return flags.isSet(Flag::IsLoad);
+        }
+
+        bool 
+        isSpec() const
+        {
+            return flags.isSet(Flag::IsSpec);
         }
 
         bool
@@ -564,10 +572,10 @@ class LSQ
     {
       public:
         SingleDataRequest(LSQUnit* port, const DynInstPtr& inst,
-                bool isLoad, const Addr& addr, const uint32_t& size,
+                bool isLoad, bool isSpec, const Addr& addr, const uint32_t& size,
                 const Request::Flags& flags_, PacketDataPtr data=nullptr,
                 uint64_t* res=nullptr, AtomicOpFunctorPtr amo_op=nullptr) :
-            LSQRequest(port, inst, isLoad, addr, size, flags_, data, res,
+            LSQRequest(port, inst, isLoad, isSpec, addr, size, flags_, data, res,
                        std::move(amo_op)) {}
 
         virtual ~SingleDataRequest() {}
@@ -608,10 +616,10 @@ class LSQ
 
       public:
         SplitDataRequest(LSQUnit* port, const DynInstPtr& inst,
-                bool isLoad, const Addr& addr, const uint32_t& size,
+                bool isLoad, bool isSpec, const Addr& addr, const uint32_t& size,
                 const Request::Flags & flags_, PacketDataPtr data=nullptr,
                 uint64_t* res=nullptr) :
-            LSQRequest(port, inst, isLoad, addr, size, flags_, data, res,
+            LSQRequest(port, inst, isLoad, isSpec, addr, size, flags_, data, res,
                        nullptr),
             numFragments(0),
             numReceivedPackets(0),

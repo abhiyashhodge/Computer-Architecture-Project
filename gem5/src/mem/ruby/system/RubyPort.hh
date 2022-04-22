@@ -93,6 +93,7 @@ class RubyPort : public ClockedObject
         void evictionCallback(Addr address);
 
       protected:
+        // [Revice] This is where packets go from the CPU to the memory portion
         bool recvTimingReq(PacketPtr pkt);
 
         Tick recvAtomic(PacketPtr pkt);
