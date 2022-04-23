@@ -288,6 +288,10 @@ enumeration(MessageSizeType, desc="...") {
   Unblock_Control, desc="Unblock control";
   Persistent_Control, desc="Persistent request activation messages";
   Completion_Control, desc="Completion messages";
+  // [Revice]
+  SPECLD_Control, desc="SPECLD control message";
+  SPECLD_Request_Control, desc="SPECLD forward message";
+  SPECLD_Data, desc="SPECLD data response";
 }
 
 // AccessType
