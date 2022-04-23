@@ -217,7 +217,7 @@ MemCmd::commandInfo[] =
       InvalidCmd, "InvalidateResp" },
     /* [Revice] */
     { {IsRead, IsRequest, NeedsResponse, IsSpec}, ReadSpecResp, "ReadSpecReq" },
-    { {IsRead, IsResponse, HasData, IsSpec}, InvalidCmd, "ReadSpecResp" }
+    { {IsRead, IsResponse, HasData, IsSpec}, InvalidCmd, "ReadSpecResp" },
       // hardware transactional memory
     { {IsRead, IsRequest, NeedsResponse}, HTMReqResp, "HTMReq" },
     { {IsRead, IsResponse}, InvalidCmd, "HTMReqResp" },
