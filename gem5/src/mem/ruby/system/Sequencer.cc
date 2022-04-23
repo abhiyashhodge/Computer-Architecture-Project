@@ -675,7 +675,12 @@ Sequencer::makeRequest(PacketPtr pkt)
     RubyRequestType primary_type = RubyRequestType_NULL;
     RubyRequestType secondary_type = RubyRequestType_NULL;
 
-    if (pkt->isLLSC()) {
+    // [Revice]
+    // Handle spec requests
+    if(pkt->isSpec() && pkt->cmd == MemCmd::ReadSpecReq){
+        primary_type = secondary_type = RubyRequestType_SPEC_LD;
+    }
+    else if (pkt->isLLSC()) {
         // LL/SC instructions need to be handled carefully by the cache
         // coherence protocol to ensure they follow the proper semantics. In
         // particular, by identifying the operations as atomic, the protocol

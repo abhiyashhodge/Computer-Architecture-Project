@@ -1037,7 +1037,7 @@ LSQ::LSQRequest::LSQRequest(
     _numOutstandingPackets(0), _amo_op(nullptr)
 {
     flags.set(Flag::IsLoad, isLoad);
-    flags.set(Flag::isSpec, isSpec);
+    flags.set(Flag::IsSpec, isSpec);
     flags.set(Flag::WriteBackToRegister,
               _inst->isStoreConditional() || _inst->isAtomic() ||
               _inst->isLoad());
@@ -1059,7 +1059,7 @@ LSQ::LSQRequest::LSQRequest(
     _amo_op(std::move(amo_op))
 {
     flags.set(Flag::IsLoad, isLoad);
-    flags.set(Flag::isSpec, isSpec);
+    flags.set(Flag::IsSpec, isSpec);
     flags.set(Flag::WriteBackToRegister,
               _inst->isStoreConditional() || _inst->isAtomic() ||
               _inst->isLoad());
@@ -1166,16 +1166,10 @@ LSQ::SingleDataRequest::buildPackets()
                 _packets.push_back(Packet::createReadSpec(req()));
             }
         } else {
-            _packets.push_back(Packet::createWrite(req())));
+            _packets.push_back(Packet::createWrite(req()));
         }
         _packets.back()->dataStatic(_inst->memData);
         _packets.back()->senderState = this;
-        
-        
-        // [Revice] If spec, set the mem command
-        if(isLoad() && !_inst->isNonSpeculative()){
-            _packets.back()->cmd.setCmdAttribSpec();
-        }
 
 
         // hardware transactional memory
@@ -1207,13 +1201,8 @@ LSQ::SplitDataRequest::buildPackets()
     if (_packets.size() == 0) {
         /* New stuff */
         if (isLoad()) {
-            _mainPacket = Packet::createRead(_mainReq);
+            _mainPacket = _inst->isNonSpeculative() ? Packet::createRead(_mainReq) : Packet::createReadSpec(_mainReq);
             _mainPacket->dataStatic(_inst->memData);
-
-            // [Revice] If spec, set the mem command
-            if(!_inst->isNonSpeculative()){
-                _packets.back()->cmd.setCmdAttribSpec();
-            }
 
             // hardware transactional memory
             // If request originates in a transaction,
