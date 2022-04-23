@@ -455,7 +455,6 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
           trigger(Event:Fwd_GETS, in_msg.addr, cache_entry, tbe);
         } else if (in_msg.Type == CoherenceRequestType:GET_INSTR) {
           trigger(Event:Fwd_GET_INSTR, in_msg.addr, cache_entry, tbe);
-        } 
         } else if (in_msg.Type == CoherenceRequestType:GETSPEC) {
           // [Revice]
           trigger(Event:Fwd_GETSPEC, in_msg.addr, cache_entry, tbe);
