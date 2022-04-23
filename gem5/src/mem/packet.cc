@@ -215,6 +215,7 @@ MemCmd::commandInfo[] =
     /* Invalidation Response */
     { {IsInvalidate, IsResponse},
       InvalidCmd, "InvalidateResp" },
+    { {IsRead, IsRequest, NeedsResponse, IsSpec}, ReadSpecResp, "ReadSpecReq" },
       // hardware transactional memory
     { {IsRead, IsRequest, NeedsResponse}, HTMReqResp, "HTMReq" },
     { {IsRead, IsResponse}, InvalidCmd, "HTMReqResp" },

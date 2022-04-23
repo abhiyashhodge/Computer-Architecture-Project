@@ -140,7 +140,9 @@ class MemCmd
         HTMReq,
         HTMReqResp,
         HTMAbort,
-        ReadSpecReq, // [Revice] new command
+        // [Revice] new commands    
+        ReadSpecReq,
+        ReadSpecResp,
         NUM_MEM_CMDS
     };
 
