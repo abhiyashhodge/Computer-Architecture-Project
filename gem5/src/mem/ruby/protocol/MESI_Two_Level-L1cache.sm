@@ -111,6 +111,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     Load,            desc="Load request from the home processor";
     Ifetch,          desc="I-fetch request from the home processor";
     Store,           desc="Store request from the home processor";
+    SpecLoad,        desc="SpecLoad request from the home processor";
 
     Inv,           desc="Invalidate request from L2 bank";
 
@@ -277,6 +278,9 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
       return Event:Ifetch;
     } else if ((type == RubyRequestType:ST) || (type == RubyRequestType:ATOMIC)) {
       return Event:Store;
+    } else if (type == RubyRequestType:SPEC_LD) {
+      DPRINTF(RubySlicc, "Got SLICC event SpecLoad\n");
+      return Event:SpecLoad;
     } else {
       error("Invalid RubyRequestType");
     }
