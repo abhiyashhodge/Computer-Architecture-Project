@@ -46,6 +46,7 @@
  */
 
 #include "mem/packet.hh"
+#include "debug/PacketDebug.hh"
 
 #include <algorithm>
 #include <cstring>
@@ -376,7 +377,7 @@ void
 Packet::print(std::ostream &o, const int verbosity,
               const std::string &prefix) const
 {
-    ccprintf(o, "%s%s [%x:%x]%s%s%s%s%s%s", prefix, cmdString(),
+    DPRINTF(PacketDebug, "%s%s [%x:%x]%s%s%s%s%s%s", prefix, cmdString(),
              getAddr(), getAddr() + getSize() - 1,
              req->isSecure() ? " (s)" : "",
              req->isInstFetch() ? " IF" : "",
