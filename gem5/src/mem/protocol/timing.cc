@@ -48,7 +48,9 @@ namespace gem5
 bool
 TimingRequestProtocol::sendReq(TimingResponseProtocol *peer, PacketPtr pkt)
 {
-    pkt->print();
+    if(!pkt->isRequest()){
+        pkt->print();
+    }
     assert(pkt->isRequest());
     return peer->recvTimingReq(pkt);
 }
