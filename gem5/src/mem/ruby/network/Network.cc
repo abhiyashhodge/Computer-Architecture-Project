@@ -184,7 +184,7 @@ Network::MessageSizeType_to_int(MessageSizeType size_type)
       case MessageSizeType_Writeback_Data:
         return m_data_msg_size;
       default:
-        printf("Error: unknown message size type! %d\n");
+        printf("Error: unknown message size type! %d\n", static_cast<int>(size_type));
         panic("Invalid range for type MessageSizeType");
         break;
     }
