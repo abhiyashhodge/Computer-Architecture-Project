@@ -200,8 +200,8 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
   }
 
   // [Revice] Attempt to gain direct access to cache memory
-  CacheMemory& l1DataCachePtr(), return_by_pointer="yes"{
-    return L1Dcache;
+  CacheMemory l1DataCachePtr(), return_by_pointer="yes"{
+    return *L1Dcache;
   }
 
   State getState(TBE tbe, Entry cache_entry, Addr addr) {
