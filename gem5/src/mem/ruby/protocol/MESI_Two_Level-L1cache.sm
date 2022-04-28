@@ -240,6 +240,11 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     return AccessPermission:NotPresent;
   }
 
+  // [Revice] Attempt to geain direct access to cache memory
+  CacheMemory * l1DataCachePtr(){
+    return L1Dcache;
+  }
+
   void functionalRead(Addr addr, Packet *pkt) {
     TBE tbe := TBEs[addr];
     if(is_valid(tbe)) {
