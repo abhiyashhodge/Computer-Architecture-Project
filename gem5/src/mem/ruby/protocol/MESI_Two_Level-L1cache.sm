@@ -592,7 +592,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
         out_msg.MessageSize := MessageSizeType:SPECLD_Control;
         out_msg.Prefetch := in_msg.Prefetch;
         out_msg.AccessMode := in_msg.AccessMode;
-				out_msg.pkt := in_msg.pkt;
+				
       }
     }
   }
