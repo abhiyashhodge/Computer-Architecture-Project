@@ -816,7 +816,7 @@ Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
         msg->m_htmTransactionUid = pkt->getHtmTransactionUid();
     }
 
-    L1Cache_Controller* l1Cache_Controller = (L1Cache_Entry*)m_controller;
+    L1Cache_Controller* l1Cache_Controller = (L1Cache_Controller*)m_controller;
 
     Tick latency = cyclesToTicks(
                         m_controller->mandatoryQueueLatency(secondary_type));
