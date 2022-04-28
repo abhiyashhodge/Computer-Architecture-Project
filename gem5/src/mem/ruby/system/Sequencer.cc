@@ -305,6 +305,7 @@ RequestStatus
 Sequencer::insertRequest(PacketPtr pkt, RubyRequestType primary_type,
                          RubyRequestType secondary_type)
 {
+    DPRINTF(RubySequencer, "Inserting Request %s\n", pkt->cmdString());
     // See if we should schedule a deadlock check
     if (!deadlockCheckEvent.scheduled() &&
         drainState() != DrainState::Draining) {
@@ -668,6 +669,7 @@ Sequencer::empty() const
 RequestStatus
 Sequencer::makeRequest(PacketPtr pkt)
 {
+    DPRINTF(RubySequencer, "Making Request %s\n", pkt->cmdString());
     // HTM abort signals must be allowed to reach the Sequencer
     // the same cycle they are issued. They cannot be retried.
     if ((m_outstanding_count >= m_max_outstanding_requests) &&
@@ -782,7 +784,7 @@ Sequencer::makeRequest(PacketPtr pkt)
 void
 Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
 {
-    DPRINTF(RubySequencer, "Issuing %s\n", pkt->cmdString());
+    DPRINTF(RubySequencer, "Issuing Request %s\n", pkt->cmdString());
     assert(pkt != NULL);
     ContextID proc_id = pkt->req->hasContextId() ?
         pkt->req->contextId() : InvalidContextID;
@@ -816,6 +818,7 @@ Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
         msg->m_htmTransactionUid = pkt->getHtmTransactionUid();
     }
 
+    // [Revice] Try to get the cache entry and store it if it gets replaced by a speculative load
     L1Cache_Controller* l1Cache_Controller = (L1Cache_Controller*)m_controller;
     L1Cache_Entry* l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
 
