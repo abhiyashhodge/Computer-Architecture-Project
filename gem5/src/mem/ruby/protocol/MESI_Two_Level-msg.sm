@@ -36,7 +36,6 @@ enumeration(CoherenceRequestType, desc="...") {
   GET_INSTR, desc="Get Instruction";
   INV,       desc="INValidate";
   PUTX,      desc="Replacement message";
-  GETSPEC,   desc="Get Speculatively";
 
   WB_ACK,    desc="Writeback ack";
 
