@@ -44,6 +44,8 @@ class Func(Symbol):
         else:
             self.public = False
         self.c_name = name.replace("_PUBLIC", "")
+        print("Func: %s" % self.c_name)
+        print("Public: %s" % self.public)
         self.class_name = ""
 
     def __repr__(self):
