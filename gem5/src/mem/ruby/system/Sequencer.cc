@@ -59,6 +59,9 @@
 #include "mem/ruby/system/RubySystem.hh"
 #include "sim/system.hh"
 
+// [Revice]
+#include "mem/ruby/protocol/L1Cache_Controller.cc"
+
 namespace gem5
 {
 
@@ -779,6 +782,7 @@ Sequencer::makeRequest(PacketPtr pkt)
 void
 Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
 {
+    DPRINTF(RubySequencer, "Issuing %s\n", pkt->cmdString());
     assert(pkt != NULL);
     ContextID proc_id = pkt->req->hasContextId() ?
         pkt->req->contextId() : InvalidContextID;
@@ -811,6 +815,8 @@ Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
         msg->m_htmFromTransaction = true;
         msg->m_htmTransactionUid = pkt->getHtmTransactionUid();
     }
+
+    L1Cache_Controller* l1Cache_Controller = (L1Cache_Entry*)m_controller;
 
     Tick latency = cyclesToTicks(
                         m_controller->mandatoryQueueLatency(secondary_type));
