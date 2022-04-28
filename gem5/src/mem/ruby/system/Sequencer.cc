@@ -821,6 +821,9 @@ Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
     // [Revice] Try to get the cache entry and store it if it gets replaced by a speculative load
     L1Cache_Controller* l1Cache_Controller = (L1Cache_Controller*)m_controller;
     L1Cache_Entry* l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
+    if (l1Cache_Entry != NULL) {
+        l1Cache_Entry->print(std::cout);
+    }
 
     Tick latency = cyclesToTicks(
                         m_controller->mandatoryQueueLatency(secondary_type));
