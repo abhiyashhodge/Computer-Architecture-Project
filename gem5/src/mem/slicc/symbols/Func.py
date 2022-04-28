@@ -39,14 +39,11 @@ class Func(Symbol):
         self.isInternalMachineFunc = False
         self.c_ident = ident
         self.c_name = name
-        if "_PUBLIC" in name:
+        self.class_name = ""
+        if "public" in self:
             self.public = True
         else:
             self.public = False
-        self.c_name = name.replace("_PUBLIC", "")
-        print("Func: %s" % self.c_name)
-        print("Public: %s" % self.public)
-        self.class_name = ""
 
     def __repr__(self):
         return ""
