@@ -189,7 +189,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     return L1Icache_entry;
   }
 
-  Entry getL1DCacheEntry(Addr addr), return_by_pointer="yes" {
+  public Entry getL1DCacheEntry(Addr addr), return_by_pointer="yes" {
     Entry L1Dcache_entry := static_cast(Entry, "pointer", L1Dcache[addr]);
     return L1Dcache_entry;
   }
