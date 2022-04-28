@@ -56,7 +56,7 @@ class Func(Symbol):
         elif "return_by_pointer" in self and self.return_type != void_type:
             return_type += "*"
 
-        return "%s %s(%s);" % (return_type, self.c_name,
+        return "// A function!\n%s %s(%s);" % (return_type, self.c_name,
                                ", ".join(self.param_strings))
 
     def writeCodeFiles(self, path, includes):
