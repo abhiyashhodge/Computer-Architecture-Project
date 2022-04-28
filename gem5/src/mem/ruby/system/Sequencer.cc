@@ -817,8 +817,8 @@ Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
     }
 
     L1Cache_Controller* l1Cache_Controller = (L1Cache_Controller*)m_controller;
-    L1Cache_Entry* l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(&(msg->m_LineAddress));
-    
+    L1Cache_Entry* l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
+
     Tick latency = cyclesToTicks(
                         m_controller->mandatoryQueueLatency(secondary_type));
     assert(latency > 0);
