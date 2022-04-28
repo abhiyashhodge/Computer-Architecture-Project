@@ -42,6 +42,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
  : Sequencer * sequencer;
    CacheMemory * L1Icache;
    CacheMemory * L1Dcache;
+   CacheMemory * VictimCache;
    RubyPrefetcher * prefetcher;
    int l2_select_num_bits;
    Cycles l1_request_latency := 2;
@@ -89,7 +90,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     E, AccessPermission:Read_Only, desc="a L1 cache entry Exclusive";
     M, AccessPermission:Read_Write, desc="a L1 cache entry Modified", format="!b";
     // [Revice]
-    X, AccessPermission:Read_Only, desc="a L1 cache entry Speculatively observed";
+    X, AccessPermission:Read_Only, desc="a Speculative L1 cache entry";
 
     // Transient States
     IS, AccessPermission:Busy, desc="L1 idle, issued GETS, have not seen response yet";
@@ -153,6 +154,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     DataBlock DataBlk,       desc="data for the block";
     bool Dirty, default="false",   desc="data is dirty";
     bool isPrefetch, desc="Set if this block was prefetched and not yet accessed";
+		bool isSpec, default="false", desc="Set if the entry is the product of a speculative load";
   }
 
   // TBE fields
@@ -163,6 +165,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     bool Dirty, default="false",   desc="data is dirty";
     bool isPrefetch,       desc="Set if this was caused by a prefetch";
     int pendingAcks, default="0", desc="number of pending acks";
+		bool isSpec, default="false", desc="is transient speculative request";
   }
 
   structure(TBETable, external="yes") {
@@ -170,6 +173,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
     void allocate(Addr);
     void deallocate(Addr);
     bool isPresent(Addr);
+		bool isSpec(Addr);
   }
 
   TBETable TBEs, template="<L1Cache_TBE>", constructor="m_number_of_TBEs";
@@ -588,6 +592,7 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
         out_msg.MessageSize := MessageSizeType:SPECLD_Control;
         out_msg.Prefetch := in_msg.Prefetch;
         out_msg.AccessMode := in_msg.AccessMode;
+				out_msg.pkt := in_msg.pkt;
       }
     }
   }
@@ -1181,8 +1186,15 @@ machine(MachineType:L1Cache, "MESI Directory L1 Cache CMP")
   }
 
   // Transitions from Shared
-  transition({S,E,M}, {Load, SpecLoad}) {
+  transition({S,E,M}, {Load}) {
     h_load_hit;
+    uu_profileDataHit;
+    po_observeHit;
+    k_popMandatoryQueue;
+  }
+
+	transition({S,E,M}, {SpecLoad}) {
+    h_spec_load_hit;
     uu_profileDataHit;
     po_observeHit;
     k_popMandatoryQueue;
