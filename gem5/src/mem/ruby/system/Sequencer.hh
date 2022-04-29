@@ -90,6 +90,18 @@ class Sequencer : public RubyPort
     Sequencer(const Params &);
     ~Sequencer();
 
+
+    // [Revice] Setup our victim cache, a map of line addresses to requests
+    typedef enum {Issued, Squashed, Commited} SpeculativeRequestStatus;
+    struct SpeculativeRequest
+    {
+      L1Cache_Entry l1CacheEntry;
+      SpeculativeRequestStatus status; 
+    };
+    // Victim cache
+    typedef std::unordered_map<Addr, SpeculativeRequest> VictimCache;
+    
+
     /**
      * Proxy function to writeCallback that first
      * invalidates the line address in the local monitor.
