@@ -754,13 +754,7 @@ namespace gem5
             RubyRequestType primary_type = RubyRequestType_NULL;
             RubyRequestType secondary_type = RubyRequestType_NULL;
 
-            // [Revice]
-            // Handle spec requests
-            if (pkt->isSpec() && pkt->cmd == MemCmd::ReadSpecReq)
-            {
-                primary_type = secondary_type = RubyRequestType_SPEC_LD;
-            }
-            else if (pkt->isLLSC())
+            if (pkt->isLLSC())
             {
                 // LL/SC instructions need to be handled carefully by the cache
                 // coherence protocol to ensure they follow the proper semantics. In
@@ -932,11 +926,14 @@ namespace gem5
                     l1Cache_Entry->print(std::cout);
                     // Store the initial value of the cache entry
                     // If it is replaced after squashing the speculative load, we know to restore the original value
-                    L1Cache_Entry* l1Cache_Entry_copy = &(L1Cache_Entry(l1Cache_Entry));
+                    L1Cache_Entry l1Cache_Entry_copy = L1Cache_Entry(l1Cache_Entry);
                     SpeculativeRequest req = {
-                        l1Cache_Entry_copy,
-                        SpeculativeRequestStatus::Issued} VictimCache[msg->m_LineAddress] = req;
-                } else {
+                        &l1Cache_Entry_copy,
+                        SpeculativeRequestStatus::Issued};
+                    VictimCache[msg->m_LineAddress] = req;
+                }
+                else
+                {
                     std::cout << "Existing cache entry is NULL" << std::endl;
                 }
             }
