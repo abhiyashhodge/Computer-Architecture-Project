@@ -557,7 +557,12 @@ namespace gem5
          */
         SenderState *popSenderState();
 
-        bool _isSpec;
+        enum SpecState {
+            IS_SPEC,
+            IS_NOT_SPEC
+        };
+
+        SpecState _isSpec;
 
         /**
          * Go through the sender state stack and return the first instance
@@ -619,7 +624,7 @@ namespace gem5
         bool isFlush() const { return cmd.isFlush(); }
 
         // [Revice]
-        bool isSpecLoad() const { return cmd.isRead() && _isSpec; }
+        bool isSpecLoad() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC; }
 
         bool isWholeLineWrite(unsigned blk_size)
         {
@@ -878,7 +883,7 @@ namespace gem5
          * first, but the Requests's physical address and size fields need
          * not be valid. The command must be supplied.
          */
-        Packet(const RequestPtr &_req, MemCmd _cmd, bool _isSpec = false)
+        Packet(const RequestPtr &_req, MemCmd _cmd, SpecState _isSpec = SpecState::IS_NOT_SPEC)
             : cmd(_cmd), id((PacketId)_req.get()), req(_req),
               data(nullptr), addr(0), _isSecure(false), size(0),
               _qosValue(0),
@@ -922,7 +927,7 @@ namespace gem5
          * a request that is for a whole block, not the address from the
          * req.  this allows for overriding the size/addr of the req.
          */
-        Packet(const RequestPtr &_req, MemCmd _cmd, int _blkSize, PacketId _id = 0, bool _isSpec = false)
+        Packet(const RequestPtr &_req, MemCmd _cmd, int _blkSize, PacketId _id = 0, SpecState _isSpec = SpecState::IS_NOT_SPEC)
             : cmd(_cmd), id(_id ? _id : (PacketId)_req.get()), req(_req),
               data(nullptr), addr(0), _isSecure(false),
               _qosValue(0),
@@ -949,7 +954,7 @@ namespace gem5
          * less than that of the original packet.  In this case the new
          * packet should allocate its own data.
          */
-        Packet(const PacketPtr pkt, bool clear_flags, bool alloc_data, bool _isSpec = false)
+        Packet(const PacketPtr pkt, bool clear_flags, bool alloc_data, SpecState _isSpec = SpecState::IS_NOT_SPEC)
             : cmd(pkt->cmd), id(pkt->id), req(pkt->req),
               data(nullptr),
               addr(pkt->addr), _isSecure(pkt->_isSecure), size(pkt->size),
@@ -1062,7 +1067,7 @@ namespace gem5
         static PacketPtr
         createReadSpec(const RequestPtr &req)
         {
-            return new Packet(req, makeReadCmd(req), true); // true for _isSpec
+            return new Packet(req, makeReadCmd(req), SpecState::IS_SPEC); // true for _isSpec
         }
 
         static PacketPtr
