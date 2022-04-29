@@ -53,8 +53,6 @@
 #include "mem/ruby/system/RubyPort.hh"
 #include "params/RubySequencer.hh"
 
-// [Revice]
-#include "mem/ruby/protocol/L1Cache_Controller.hh"
 
 namespace gem5
 {
@@ -98,7 +96,7 @@ class Sequencer : public RubyPort
     typedef enum {Issued, Squashed, Commited} SpeculativeRequestStatus;
     struct SpeculativeRequest
     {
-      L1Cache_Entry l1CacheEntry;
+      AbstractCacheEntry* l1CacheEntry;
       SpeculativeRequestStatus status; 
     };
     // Victim cache
