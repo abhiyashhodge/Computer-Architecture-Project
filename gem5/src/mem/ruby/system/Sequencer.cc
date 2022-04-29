@@ -930,7 +930,7 @@ namespace gem5
                     // Store the initial value of the cache entry
                     // If it is replaced after squashing the speculative load, we know to restore the original value
                     SpeculativeRequest req = {
-                        l1Cache_Entry,
+                        *l1Cache_Entry,
                         SpeculativeRequestStatus::Issued} VictimCache[msg->m_LineAddress] = req;
                 } else {
                     std::cout << "Existing cache entry is NULL" << std::endl;
