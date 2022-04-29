@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.html": "html",
+        "vector": "cpp",
+        "__split_buffer": "cpp",
+        "deque": "cpp",
+        "list": "cpp",
+        "*.tcc": "cpp",
+        "iostream": "cpp"
+    }
+}
