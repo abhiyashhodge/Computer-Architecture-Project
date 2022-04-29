@@ -59,9 +59,6 @@
 #include "mem/ruby/system/RubySystem.hh"
 #include "sim/system.hh"
 
-// [Revice]
-#include "mem/ruby/protocol/L1Cache_Controller.hh"
-
 namespace gem5
 {
 

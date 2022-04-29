@@ -53,6 +53,9 @@
 #include "mem/ruby/system/RubyPort.hh"
 #include "params/RubySequencer.hh"
 
+// [Revice]
+#include "mem/ruby/protocol/L1Cache_Controller.hh"
+
 namespace gem5
 {
 
