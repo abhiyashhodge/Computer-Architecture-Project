@@ -884,7 +884,7 @@ namespace gem5
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0), snoopDelay(0),
-              payloadDelay(0), senderState(NULL), _isSpec(_isSpec),
+              payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -928,7 +928,7 @@ namespace gem5
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0),
-              snoopDelay(0), payloadDelay(0), senderState(NULL), _isSpec(_isSpec),
+              snoopDelay(0), payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -959,7 +959,7 @@ namespace gem5
               headerDelay(pkt->headerDelay),
               snoopDelay(0),
               payloadDelay(pkt->payloadDelay),
-              senderState(pkt->senderState), _isSpec(_isSpec),
+              senderState(pkt->senderState), _isSpec(_isSpec)
         {
             if (!clear_flags)
                 flags.set(pkt->flags & COPY_FLAGS);
