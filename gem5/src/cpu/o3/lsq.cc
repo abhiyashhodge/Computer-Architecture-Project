@@ -1160,12 +1160,12 @@ LSQ::SingleDataRequest::buildPackets()
     if (_packets.size() == 0) {
         // [Revice] change type of packet pushed based on spec/non-spec
         if(isLoad()){
-            // if(_inst->isNonSpeculative()){
-            //     _packets.push_back(Packet::createRead(req()));
-            // } else {
-            //     _packets.push_back(Packet::createReadSpec(req()));
-            // }
-            _packets.push_back(Packet::createRead(req()));
+            if(_inst->isNonSpeculative()){
+                _packets.push_back(Packet::createRead(req()));
+            } else {
+                _packets.push_back(Packet::createReadSpec(req()));
+            }
+            // _packets.push_back(Packet::createRead(req()));
         } else {
             _packets.push_back(Packet::createWrite(req()));
         }
@@ -1202,8 +1202,8 @@ LSQ::SplitDataRequest::buildPackets()
     if (_packets.size() == 0) {
         /* New stuff */
         if (isLoad()) {
-            // _mainPacket = _inst->isNonSpeculative() ? Packet::createRead(_mainReq) : Packet::createReadSpec(_mainReq);
-            _mainPacket = Packet::createRead(_mainReq);
+            _mainPacket = _inst->isNonSpeculative() ? Packet::createRead(_mainReq) : Packet::createReadSpec(_mainReq);
+            // _mainPacket = Packet::createRead(_mainReq);
             _mainPacket->dataStatic(_inst->memData);
 
             // hardware transactional memory
