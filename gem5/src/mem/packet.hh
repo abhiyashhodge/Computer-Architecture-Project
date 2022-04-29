@@ -878,13 +878,13 @@ namespace gem5
          * not be valid. The command must be supplied.
          */
         Packet(const RequestPtr &_req, MemCmd _cmd, bool _isSpec = false)
-            : cmd(_cmd), id((PacketId)_req.get()), req(_req),
+            : cmd(_cmd), id((PacketId)_req.get()), req(_req), _isSpec(_isSpec),
               data(nullptr), addr(0), _isSecure(false), size(0),
               _qosValue(0),
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0), snoopDelay(0),
-              payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
+              payloadDelay(0), senderState(NULL)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -922,13 +922,13 @@ namespace gem5
          * req.  this allows for overriding the size/addr of the req.
          */
         Packet(const RequestPtr &_req, MemCmd _cmd, int _blkSize, PacketId _id = 0, bool _isSpec = false)
-            : cmd(_cmd), id(_id ? _id : (PacketId)_req.get()), req(_req),
+            : cmd(_cmd), id(_id ? _id : (PacketId)_req.get()), req(_req),  _isSpec(_isSpec),
               data(nullptr), addr(0), _isSecure(false),
               _qosValue(0),
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0),
-              snoopDelay(0), payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
+              snoopDelay(0), payloadDelay(0), senderState(NULL)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -949,7 +949,7 @@ namespace gem5
          * packet should allocate its own data.
          */
         Packet(const PacketPtr pkt, bool clear_flags, bool alloc_data, bool _isSpec = false)
-            : cmd(pkt->cmd), id(pkt->id), req(pkt->req),
+            : cmd(pkt->cmd), id(pkt->id), req(pkt->req),  _isSpec(_isSpec),
               data(nullptr),
               addr(pkt->addr), _isSecure(pkt->_isSecure), size(pkt->size),
               bytesValid(pkt->bytesValid),
@@ -959,7 +959,7 @@ namespace gem5
               headerDelay(pkt->headerDelay),
               snoopDelay(0),
               payloadDelay(pkt->payloadDelay),
-              senderState(pkt->senderState), _isSpec(_isSpec)
+              senderState(pkt->senderState)
         {
             if (!clear_flags)
                 flags.set(pkt->flags & COPY_FLAGS);
