@@ -635,7 +635,7 @@ namespace gem5
 
         // [Revice]
         bool isSpecLoad() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC; }
-        bool isSpecIssued() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && return _specIssueState == SpecIssueState::ISSUED; }
+        bool isSpecIssued() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && _specIssueState == SpecIssueState::ISSUED; }
         bool isSpecSquashed() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && _specIssueState == SpecIssueState::SQUASHED; }
         bool isSpecCommited() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && _specIssueState == SpecIssueState::COMMITED; }
 
