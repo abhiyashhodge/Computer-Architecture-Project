@@ -930,7 +930,7 @@ namespace gem5
                     SpeculativeRequest req = {
                         &l1Cache_Entry_copy,
                         SpeculativeRequestStatus::Issued};
-                    VictimCache[msg->m_LineAddress] = req;
+                    VictimCache.insert(std::make_pair(msg->m_LineAddress, req));
                 }
                 else
                 {

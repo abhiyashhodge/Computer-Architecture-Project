@@ -100,7 +100,7 @@ class Sequencer : public RubyPort
       SpeculativeRequestStatus status; 
     };
     // Victim cache
-    typedef std::unordered_map<Addr, SpeculativeRequest> VictimCache;
+    typedef std::map<Addr, SpeculativeRequest> VictimCache;
     
 
     /**
