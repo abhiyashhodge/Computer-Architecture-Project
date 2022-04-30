@@ -557,12 +557,22 @@ namespace gem5
          */
         SenderState *popSenderState();
 
-        enum SpecState {
+        enum SpecState
+        {
             IS_SPEC,
             IS_NOT_SPEC
         };
 
         SpecState _isSpec;
+
+        enum SpecIssueState
+        {
+            ISSUED,
+            SQUASHED,
+            COMMITED
+        };
+
+        SpecIssueState _specIssueState;
 
         /**
          * Go through the sender state stack and return the first instance
@@ -625,6 +635,9 @@ namespace gem5
 
         // [Revice]
         bool isSpecLoad() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC; }
+        bool isSpecIssued() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && return _specIssueState == SpecIssueState::ISSUED; }
+        bool isSpecSquashed() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && _specIssueState == SpecIssueState::SQUASHED; }
+        bool isSpecCommited() const { return cmd.isRead() && _isSpec == SpecState::IS_SPEC && _specIssueState == SpecIssueState::COMMITED; }
 
         bool isWholeLineWrite(unsigned blk_size)
         {
@@ -890,7 +903,7 @@ namespace gem5
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0), snoopDelay(0),
-              payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
+              payloadDelay(0), senderState(NULL), _isSpec(_isSpec), _specIssueState(SpecIssueState::ISSUED)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -934,7 +947,7 @@ namespace gem5
               htmReturnReason(HtmCacheFailure::NO_FAIL),
               htmTransactionUid(0),
               headerDelay(0),
-              snoopDelay(0), payloadDelay(0), senderState(NULL), _isSpec(_isSpec)
+              snoopDelay(0), payloadDelay(0), senderState(NULL), _isSpec(_isSpec), _specIssueState(SpecIssueState::ISSUED)
         {
             flags.clear();
             if (req->hasPaddr())
@@ -965,7 +978,7 @@ namespace gem5
               headerDelay(pkt->headerDelay),
               snoopDelay(0),
               payloadDelay(pkt->payloadDelay),
-              senderState(pkt->senderState), _isSpec(_isSpec)
+              senderState(pkt->senderState), _isSpec(_isSpec), _specIssueState(SpecIssueState::ISSUED)
         {
             if (!clear_flags)
                 flags.set(pkt->flags & COPY_FLAGS);
