@@ -955,6 +955,8 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
         }
         // Clear the smart pointer to make sure it is decremented.
         loadQueue.back().instruction()->setSquashed();
+        // [Revice] In addition to setting the instruction as squashed, we trigger the Sequencer's squash event.
+        std::cout << "Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
         loadQueue.back().clear();
 
         loadQueue.pop_back();
