@@ -962,6 +962,10 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
             // This seems unnecessary, since all requests have either 0 or 1 packets.
             for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++) {
                 PacketPtr pkt = loadQueue.back().request()->_packets[i];
+                if(!pkt->isRequest()){
+                    std::cout << "Packet is not a request" << std::endl;
+                    continue;
+                }
                 // change packet status to squashed and send it as another timing request
                 pkt->_specIssueState = Packet::SpecIssueState::SQUASHED;
                 loadQueue.back().request()->packetClearSendFlags();
