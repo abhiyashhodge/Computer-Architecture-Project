@@ -954,8 +954,8 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
               htmStarts, htmStops);
         }
         // [Revice] In addition to setting the instruction as squashed, we trigger the Sequencer's squash event.
-        if(loadQueue.back().request()->_packets == NULL){
-            std::cout << "loadQueue.back().request()->_packets is NULL" << std::endl;
+        if(loadQueue.back().request() == NULL){
+            std::cout << "loadQueue.back().request() is NULL" << std::endl;
         } else {
             std::cout << "Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
         }
