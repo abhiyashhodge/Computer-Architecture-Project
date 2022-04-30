@@ -745,6 +745,16 @@ namespace gem5
             DPRINTF(RubySequencer, "Making Request %s\n", pkt->cmdString());
             // HTM abort signals must be allowed to reach the Sequencer
             // the same cycle they are issued. They cannot be retried.
+            if (pkt->isSpecSquashed())
+            {
+                std::cout << "SPEC SQUASHED" << std::endl;
+                return RequestStatus_Aliased;
+            }
+            else if (pkt->isSpecCommited())
+            {
+                std::cout << "SPEC COMMITED" << std::endl;
+                return RequestStatus_Aliased;
+            }
             if ((m_outstanding_count >= m_max_outstanding_requests) &&
                 !pkt->req->isHTMAbort())
             {
@@ -884,18 +894,7 @@ namespace gem5
         {
             DPRINTF(RubySequencer, "Issuing Request %s\n", pkt->cmdString());
             assert(pkt != NULL);
-
-            std::cout << "Sequencer got packet for a speculative load" << std::endl;
-            if (pkt->isSpecSquashed())
-            {
-                std::cout << "SPEC SQUASHED" << std::endl;
-                return;
-            }
-            else if (pkt->isSpecCommited())
-            {
-                std::cout << "SPEC COMMITED" << std::endl;
-                return;
-            }
+            
 
             ContextID proc_id = pkt->req->hasContextId() ? pkt->req->contextId() : InvalidContextID;
 
@@ -933,6 +932,7 @@ namespace gem5
             // [Revice] Try to get the cache entry and store it if it gets replaced by a speculative load
             if (pkt->isSpecLoad())
             {
+                std::cout << "Sequencer got packet for a speculative load" << std::endl;
                 L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
                 L1Cache_Entry *l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
                 if (l1Cache_Entry != NULL)
