@@ -743,13 +743,6 @@ namespace gem5
         Sequencer::makeRequest(PacketPtr pkt)
         {
             DPRINTF(RubySequencer, "Making Request %s\n", pkt->cmdString());
-            if(pkt->isSpecSquashed()){
-                std::cout << "SPEC SQUASHED" << std::endl;
-                return RequestStatus_Issued;
-            } else if (pkt->isSpecCommited()){
-                std::cout << "SPEC COMMITED" << std::endl;
-                return RequestStatus_Issued;
-            }
             // HTM abort signals must be allowed to reach the Sequencer
             // the same cycle they are issued. They cannot be retried.
             if ((m_outstanding_count >= m_max_outstanding_requests) &&
@@ -926,6 +919,16 @@ namespace gem5
             if (pkt->isSpecLoad())
             {
                 std::cout << "Sequencer got packet for a speculative load" << std::endl;
+                if (pkt->isSpecSquashed())
+                {
+                    std::cout << "SPEC SQUASHED" << std::endl;
+                    return;
+                }
+                else if (pkt->isSpecCommited())
+                {
+                    std::cout << "SPEC COMMITED" << std::endl;
+                    return;
+                }
                 L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
                 L1Cache_Entry *l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
                 if (l1Cache_Entry != NULL)
