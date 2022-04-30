@@ -1235,6 +1235,11 @@ LSQUnit::trySendPacket(bool isLoad, PacketPtr data_pkt)
         ret = false;
     }
 
+    if(data_pkt->isSpecCommited() || data_pkt->isSpecSquashed()){
+        // all we need to know is whether the packet got sent, ignore setting flags
+        return ret;
+    }
+
     if (ret) {
         if (!isLoad) {
             isStoreBlocked = false;
@@ -1250,11 +1255,7 @@ LSQUnit::trySendPacket(bool isLoad, PacketPtr data_pkt)
             assert(request == storeWBIt->request());
             isStoreBlocked = true;
         }
-        if(!data_pkt->isSpecCommited() && !data_pkt->isSpecSquashed()){
-            request->packetNotSent();
-        } else {
-            return true;
-        }
+        request->packetNotSent();
     }
     DPRINTF(LSQUnit, "Memory request (pkt: %s) from inst [sn:%llu] was"
             " %ssent (cache is blocked: %d, cache_got_blocked: %d)\n",
