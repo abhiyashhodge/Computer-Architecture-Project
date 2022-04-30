@@ -452,6 +452,13 @@ class LSQ
             flags.clear(Flag::Sent);
         }
 
+        void 
+        packetClearSendFlags()
+        {
+            flags.clear(Flag::Sent);
+            flags.clear(Flag::Retry);
+        }
+
         void sendFragmentToTranslation(int i);
         bool
         isComplete()

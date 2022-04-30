@@ -743,6 +743,13 @@ namespace gem5
         Sequencer::makeRequest(PacketPtr pkt)
         {
             DPRINTF(RubySequencer, "Making Request %s\n", pkt->cmdString());
+            if(pkt->isSpecSquashed()){
+                std::cout << "SPEC SQUASHED" << std::endl;
+                return RequestStatus_Issued;
+            } else if (pkt->isSpecCommited()){
+                std::cout << "SPEC COMMITED" << std::endl;
+                return RequestStatus_Issued;
+            }
             // HTM abort signals must be allowed to reach the Sequencer
             // the same cycle they are issued. They cannot be retried.
             if ((m_outstanding_count >= m_max_outstanding_requests) &&

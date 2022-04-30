@@ -959,6 +959,16 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
             std::cout << "loadQueue.back().request() is NULL" << std::endl;
         } else {
             std::cout << "Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
+            // This seems unnecessary, since all requests have either 0 or 1 packets.
+            for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++) {
+                PacketPtr pkt = loadQueue.back().request()->_packets[i];
+                // change packet status to squashed and send it as another timing request
+                pkt->_specIssueState = Packet::SpecIssueState::SQUASHED;
+                loadQueue.back().request()->packetClearSendFlags();
+                while(trySendPacket(true, pkt) == false){
+                    std::cout << "trySendPacket failed on load squash" << std::endl;
+                }
+            }
         }
         // Clear the smart pointer to make sure it is decremented.
         loadQueue.back().instruction()->setSquashed();
