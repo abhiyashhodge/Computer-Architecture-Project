@@ -748,12 +748,12 @@ namespace gem5
             if (pkt->isSpecSquashed())
             {
                 std::cout << "SPEC SQUASHED" << std::endl;
-                return RequestStatus_NULL;
+                return RequestStatus_Issued;
             }
             else if (pkt->isSpecCommited())
             {
                 std::cout << "SPEC COMMITED" << std::endl;
-                return RequestStatus_NULL;
+                return RequestStatus_Issued;
             }
             if ((m_outstanding_count >= m_max_outstanding_requests) &&
                 !pkt->req->isHTMAbort())
