@@ -865,6 +865,8 @@ namespace gem5
 
             RequestStatus status = insertRequest(pkt, primary_type, secondary_type);
 
+            std::cout << "packet inserted with status: " << status << std::endl;
+
             // It is OK to receive RequestStatus_Aliased, it can be considered Issued
             if (status != RequestStatus_Ready && status != RequestStatus_Aliased)
                 return status;
