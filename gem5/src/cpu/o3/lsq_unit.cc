@@ -786,18 +786,18 @@ namespace gem5
             }
 
             // [Revice] In addition to setting the instruction as commited, we trigger the Sequencer's commit event.
-            if (loadQueue.back().request() == NULL)
+            if (loadQueue.front().request() == NULL)
             {
                 // TODO: what causes a NULL request?
-                std::cout << "[Commit] loadQueue.back().request() is NULL" << std::endl;
+                std::cout << "[Commit] loadQueue.front().request() is NULL" << std::endl;
             }
             else
             {
-                std::cout << "[Commit] Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
+                std::cout << "[Commit] Packets in LQ.front() request: " << loadQueue.front().request()->_packets.size() << std::endl;
                 // This seems unnecessary, since all requests have either 0 or 1 packets.
-                for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++)
+                for (int i = 0; i < loadQueue.front().request()->_packets.size(); i++)
                 {
-                    PacketPtr pkt = loadQueue.back().request()->_packets[i];
+                    PacketPtr pkt = loadQueue.front().request()->_packets[i];
                     if (!pkt->isRequest() || !pkt->isSpecLoad())
                     {
                         std::cout << "[Commit] Packet is not a spec-load request" << std::endl;
@@ -805,7 +805,7 @@ namespace gem5
                     }
                     // change packet status to squashed and send it as another timing request
                     pkt->_specIssueState = Packet::SpecIssueState::COMMITED;
-                    // loadQueue.back().request()->packetClearSendFlags();
+                    // loadQueue.front().request()->packetClearSendFlags();
                     dcachePort->sendSpecLoadUpdateReq(pkt);
                     // while(trySendPacket(true, pkt) == false){
                     //     std::cout << "trySendPacket failed on load squash" << std::endl;
