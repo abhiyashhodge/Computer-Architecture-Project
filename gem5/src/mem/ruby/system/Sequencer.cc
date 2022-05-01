@@ -970,7 +970,7 @@ namespace gem5
                     // we do not have a stored entry for this line
                     std::cout << "SPEC UPDATE COMMMITED: removing stored entry" << std::endl;
                     // (4) we remove the stored entry
-                    // delete it->second.l1CacheEntry;
+                    delete it->second.l1CacheEntry;
                     VictimCache.erase(it);
                 } else {
                     std::cout << "SPEC UPDATE COMMITED: no stored entry for this line" << std::endl;

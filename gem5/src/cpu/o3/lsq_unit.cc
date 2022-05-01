@@ -786,28 +786,28 @@ namespace gem5
             }
 
             // [Revice] In addition to setting the instruction as commited, we trigger the Sequencer's commit event.
-            if (loadQueue.front().request() == NULL)
-            {
-                // TODO: what causes a NULL request?
-                std::cout << "[Commit] loadQueue.front().request() is NULL" << std::endl;
-            }
-            else
-            {
-                std::cout << "[Commit] Packets in LQ.front() request: " << loadQueue.front().request()->_packets.size() << std::endl;
-                // This seems unnecessary, since all requests have either 0 or 1 packets.
-                for (int i = 0; i < loadQueue.front().request()->_packets.size(); i++)
-                {
-                    PacketPtr pkt = loadQueue.front().request()->_packets[i];
-                    if (!pkt->isSpecLoad())
-                    {
-                        std::cout << "[Commit] Packet is not a spec-load" << std::endl;
-                        continue;
-                    }
-                    // change packet status to squashed and send it as a spec update request
-                    pkt->_specIssueState = Packet::SpecIssueState::COMMITED;
-                    dcachePort->sendSpecLoadUpdateReq(pkt);
-                }
-            }
+            // if (loadQueue.front().request() == NULL)
+            // {
+            //     // TODO: what causes a NULL request?
+            //     std::cout << "[Commit] loadQueue.front().request() is NULL" << std::endl;
+            // }
+            // else
+            // {
+            //     std::cout << "[Commit] Packets in LQ.front() request: " << loadQueue.front().request()->_packets.size() << std::endl;
+            //     // This seems unnecessary, since all requests have either 0 or 1 packets.
+            //     for (int i = 0; i < loadQueue.front().request()->_packets.size(); i++)
+            //     {
+            //         PacketPtr pkt = loadQueue.front().request()->_packets[i];
+            //         if (!pkt->isSpecLoad())
+            //         {
+            //             std::cout << "[Commit] Packet is not a spec-load" << std::endl;
+            //             continue;
+            //         }
+            //         // change packet status to squashed and send it as a spec update request
+            //         pkt->_specIssueState = Packet::SpecIssueState::COMMITED;
+            //         dcachePort->sendSpecLoadUpdateReq(pkt);
+            //     }
+            // }
 
             loadQueue.front().clear();
             loadQueue.pop_front();
