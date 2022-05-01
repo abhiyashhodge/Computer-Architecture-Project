@@ -945,12 +945,13 @@ namespace gem5
                     {
                         // we do not have a stored entry for this line
                         std::cout << "SPEC UPDATE SQUASHED: victimized entry is stored" << std::endl;
-                    }
-                    else
-                    {
                         // (4) we remove the stored entry
                         delete it->second.l1CacheEntry;
                         VictimCache.erase(it);
+                    }
+                    else
+                    {
+                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is not stored" << std::endl;
                     }
                 }
             }
