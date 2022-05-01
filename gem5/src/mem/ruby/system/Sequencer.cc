@@ -896,7 +896,7 @@ namespace gem5
             L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
             if (pkt->isSpecSquashed())
             {
-                std::cout << "SPEC UPDATE SQUASHED" << std::endl;
+                std::cout << "SPEC UPDATE SQUASHED Initial" << std::endl;
                 // (1) we get the Addr of the packet to create a line address
                 Addr line_addr = makeLineAddress(pkt->getAddr());
                 // (2) we fetch the current L1 cache entry for the line
@@ -909,16 +909,17 @@ namespace gem5
                     if (it == VictimCache.end())
                     {
                         // we do not have a stored entry for this line
-                        std::cout << "SPEC UPDATE SQUASHED: no stored entry for this line" << std::endl;
+                        std::cout << "SPEC UPDATE SQUASHED: no stored entry for this line while L1 entry does exist for this line" << std::endl;
                     }
                     else
                     {
-                        std::cout << "SPEC UPDATE SQUASHED: we have a stored entry for this line" << std::endl;
+                        std::cout << "SPEC UPDATE SQUASHED: we have a stored entry for this line in additon to an L1 entry existing for this line" << std::endl;
                         // (4) we restore the victim cache entry
                         SpeculativeRequest spec_req = it->second;
                         L1Cache_Entry *victim_entry = (L1Cache_Entry *)spec_req.l1CacheEntry;
                         std::cout << "SPEC UPDATE SQUASHED: victim entry: " << std::endl;
                         victim_entry->print(std::cout);
+                        std::cout << std::endl;
                         l1Cache_Entry->setCacheState(victim_entry->getCacheState());
                         std::cout << "SPEC UPDATE SQUASHED: updated cache state" << std::endl;
                         l1Cache_Entry->setDataBlk(victim_entry->getDataBlk());
@@ -927,6 +928,10 @@ namespace gem5
                         std::cout << "SPEC UPDATE SQUASHED: updated dirty" << std::endl;
                         l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch());
                         std::cout << "SPEC UPDATE SQUASHED: updated isPrefetch" << std::endl;
+                        
+                        // validate that the entry is correct
+                        l1Cache_Entry->print(std::cout);
+                        std::cout << std::endl;
 
                         // (5) we remove the stored entry
                         delete victim_entry;
@@ -938,20 +943,19 @@ namespace gem5
                 else
                 {
                     // (3) we do not have a L1 cache entry for this line
-                    std::cout << "SPEC UPDATE SQUASHED: no L1 cache entry for this line" << std::endl;
                     std::map<Addr, SpeculativeRequest>::iterator it;
                     it = VictimCache.find(line_addr);
                     if (it != VictimCache.end())
                     {
                         // we do not have a stored entry for this line
-                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is stored" << std::endl;
+                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is stored even though there is no L1 entry for this line" << std::endl;
                         // (4) we remove the stored entry
                         delete it->second.l1CacheEntry;
                         VictimCache.erase(it);
                     }
                     else
                     {
-                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is not stored" << std::endl;
+                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is not stored and no L1 entry is stored for this line" << std::endl;
                     }
                 }
             }
