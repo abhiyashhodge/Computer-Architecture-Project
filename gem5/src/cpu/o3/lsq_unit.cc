@@ -798,9 +798,9 @@ namespace gem5
                 for (int i = 0; i < loadQueue.front().request()->_packets.size(); i++)
                 {
                     PacketPtr pkt = loadQueue.front().request()->_packets[i];
-                    if (!pkt->isRequest() || !pkt->isSpecLoad())
+                    if (!pkt->isSpecLoad())
                     {
-                        std::cout << "[Commit] Packet is not a spec-load request" << std::endl;
+                        std::cout << "[Commit] Packet is not a spec-load" << std::endl;
                         continue;
                     }
                     // change packet status to squashed and send it as another timing request
@@ -1063,9 +1063,9 @@ namespace gem5
                     for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++)
                     {
                         PacketPtr pkt = loadQueue.back().request()->_packets[i];
-                        if (!pkt->isRequest() || !pkt->isSpecLoad())
+                        if (!pkt->isSpecLoad())
                         {
-                            std::cout << "[Squash] Packet is not a spec-load request" << std::endl;
+                            std::cout << "[Squash] Packet is not a spec-load" << std::endl;
                             continue;
                         }
                         // change packet status to squashed and send it as another timing request
