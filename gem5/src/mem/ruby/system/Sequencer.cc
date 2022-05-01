@@ -875,8 +875,6 @@ namespace gem5
 
             RequestStatus status = insertRequest(pkt, primary_type, secondary_type);
 
-            std::cout << "packet inserted with status: " << status << std::endl;
-
             // It is OK to receive RequestStatus_Aliased, it can be considered Issued
             if (status != RequestStatus_Ready && status != RequestStatus_Aliased)
                 return status;
@@ -889,9 +887,70 @@ namespace gem5
             return RequestStatus_Issued;
         }
 
-        void 
-        Sequencer::makeSpecLoadUpdate(PacketPtr pkt){
-            std::cout << "SEQUENCER SPEC LOAD UPDATE" << std::endl;
+        // [Revice] Handle updates to speculative loads: squash or commit
+        // The pipeline to reach this code is identical to the pipeline for
+        // sendTiming() except we use a custom function chain in all the same classes.
+        void
+        Sequencer::makeSpecLoadUpdate(PacketPtr pkt)
+        {
+            L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
+            if (pkt->isSpecSquashed())
+            {
+                std::cout << "SPEC UPDATE SQUASHED" << std::endl;
+                // (1) we get the Addr of the packet to create a line address
+                Addr line_addr = makeLineAddress(pkt->getAddr());
+                // (2) we fetch the current L1 cache entry for the line
+                L1Cache_Entry *l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(line_addr);
+                if (l1Cache_Entry != NULL)
+                {
+                    // (3) we check if we have a stored victimized entry
+                    std::map<char, int>::iterator it;
+                    it = VictimCache.find(line_addr);
+                    if (it == VictimCache.end())
+                    {
+                        // we do not have a stored entry for this line
+                        std::cout << "SPEC UPDATE SQUASHED: no stored entry for this line" << std::endl;
+                    }
+                    else
+                    {
+                        // (4) we restore the victim cache entry
+                        SpeculativeRequest spec_req = it->second;
+                        L1Cache_Entry *victim_entry = (L1Cache_Entry *)spec_req.l1CacheEntry;
+                        l1Cache_Entry->setCacheState(victim_entry->getCacheState());
+                        l1Cache_Entry->setDataBlk(victim_entry->getDataBlk());
+                        l1Cache_Entry->setDirty(victim_entry->getDirty());
+                        l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch()());
+
+                        // (5) we remove the stored entry
+                        VictimCache.erase(it);
+                    }
+                }
+                else
+                {
+                    // (3) we do not have a L1 cache entry for this line
+                    std::cout << "SPEC UPDATE SQUASHED: no L1 cache entry for this line" << std::endl;
+                    std::map<char, int>::iterator it;
+                    it = VictimCache.find(line_addr);
+                    if (it != VictimCache.end())
+                    {
+                        // we do not have a stored entry for this line
+                        std::cout << "SPEC UPDATE SQUASHED: victimized entry is stored" << std::endl;
+                    }
+                    else
+                    {
+                        // (4) we remove the stored entry
+                        VictimCache.erase(it);
+                    }
+                }
+            }
+            else if (pkt->isSpecCommited())
+            {
+                std::cout << "SPEC UPDATE COMMITED" << std::endl;
+            }
+            else
+            {
+                std::cout << "SPEC UPDATE UKNOWN" << std::endl;
+            }
         }
 
         void
@@ -899,7 +958,6 @@ namespace gem5
         {
             DPRINTF(RubySequencer, "Issuing Request %s\n", pkt->cmdString());
             assert(pkt != NULL);
-            
 
             ContextID proc_id = pkt->req->hasContextId() ? pkt->req->contextId() : InvalidContextID;
 
