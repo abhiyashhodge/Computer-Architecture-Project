@@ -61,7 +61,6 @@ namespace gem5
                       PacketPtr pkt)
     {
         std::cout << "TimingResponseProtocol::sendSpecLoadUpdateReq" << std::endl;
-        assert(pkt->isRequest());
         peer->recvSpecLoadUpdate(pkt);
     }
 

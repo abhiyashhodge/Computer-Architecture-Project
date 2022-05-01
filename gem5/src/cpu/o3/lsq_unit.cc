@@ -803,13 +803,9 @@ namespace gem5
                         std::cout << "[Commit] Packet is not a spec-load" << std::endl;
                         continue;
                     }
-                    // change packet status to squashed and send it as another timing request
+                    // change packet status to squashed and send it as a spec update request
                     pkt->_specIssueState = Packet::SpecIssueState::COMMITED;
-                    // loadQueue.front().request()->packetClearSendFlags();
                     dcachePort->sendSpecLoadUpdateReq(pkt);
-                    // while(trySendPacket(true, pkt) == false){
-                    //     std::cout << "trySendPacket failed on load squash" << std::endl;
-                    // }
                 }
             }
 
@@ -1068,13 +1064,9 @@ namespace gem5
                             std::cout << "[Squash] Packet is not a spec-load" << std::endl;
                             continue;
                         }
-                        // change packet status to squashed and send it as another timing request
+                        // change packet status to squashed and send it as a spec update request
                         pkt->_specIssueState = Packet::SpecIssueState::SQUASHED;
-                        // loadQueue.back().request()->packetClearSendFlags();
                         dcachePort->sendSpecLoadUpdateReq(pkt);
-                        // while(trySendPacket(true, pkt) == false){
-                        //     std::cout << "trySendPacket failed on load squash" << std::endl;
-                        // }
                     }
                 }
                 // Clear the smart pointer to make sure it is decremented.
