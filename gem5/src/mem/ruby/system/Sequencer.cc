@@ -894,11 +894,11 @@ namespace gem5
         Sequencer::makeSpecLoadUpdate(PacketPtr pkt)
         {
             L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
+            // (1) we get the Addr of the packet to create a line address
+            Addr line_addr = makeLineAddress(pkt->getAddr());
             if (pkt->isSpecSquashed())
             {
                 std::cout << "SPEC UPDATE SQUASHED Initial" << std::endl;
-                // (1) we get the Addr of the packet to create a line address
-                Addr line_addr = makeLineAddress(pkt->getAddr());
                 // (2) we fetch the current L1 cache entry for the line
                 L1Cache_Entry *l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(line_addr);
                 if (l1Cache_Entry != NULL)
@@ -928,7 +928,7 @@ namespace gem5
                         std::cout << "SPEC UPDATE SQUASHED: updated dirty" << std::endl;
                         l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch());
                         std::cout << "SPEC UPDATE SQUASHED: updated isPrefetch" << std::endl;
-                        
+
                         // validate that the entry is correct
                         l1Cache_Entry->print(std::cout);
                         std::cout << std::endl;
@@ -936,7 +936,7 @@ namespace gem5
                         // (5) we remove the stored entry
                         delete victim_entry;
                         VictimCache.erase(it);
-                        
+
                         std::cout << "SPEC UPDATE SQUASHED: restored victim entry successfully!" << std::endl;
                     }
                 }
@@ -962,6 +962,17 @@ namespace gem5
             else if (pkt->isSpecCommited())
             {
                 std::cout << "SPEC UPDATE COMMITED" << std::endl;
+                // (2) if we have a potential victim stored, we remove it
+                std::map<Addr, SpeculativeRequest>::iterator it;
+                it = VictimCache.find(line_addr);
+                if (it != VictimCache.end())
+                {
+                    // we do not have a stored entry for this line
+                    std::cout << "SPEC UPDATE COMMMITED: removing stored entry" << std::endl;
+                    // (4) we remove the stored entry
+                    delete it->second.l1CacheEntry;
+                    VictimCache.erase(it);
+                }
             }
             else
             {
@@ -1011,14 +1022,13 @@ namespace gem5
             // [Revice] Try to get the cache entry and store it if it gets replaced by a speculative load
             if (pkt->isSpecLoad())
             {
-                std::cout << "Sequencer got packet for a speculative load" << std::endl;
                 L1Cache_Controller *l1Cache_Controller = (L1Cache_Controller *)m_controller;
                 L1Cache_Entry *l1Cache_Entry = l1Cache_Controller->getL1DCacheEntry(msg->m_LineAddress);
                 if (l1Cache_Entry != NULL)
                 {
                     // Store the initial value of the cache entry
                     // If it is replaced after squashing the speculative load, we know to restore the original value
-                    L1Cache_Entry* l1Cache_Entry_copy = l1Cache_Entry->clone();
+                    L1Cache_Entry *l1Cache_Entry_copy = l1Cache_Entry->clone();
                     // Print copy to make sure copy-constructor is working
                     // l1Cache_Entry_copy->print(std::cout);
                     SpeculativeRequest req = {
@@ -1028,7 +1038,7 @@ namespace gem5
                 }
                 else
                 {
-                    std::cout << "Existing cache entry is NULL" << std::endl;
+                    std::cout << "Cannot store potential victim because L1 cache entry is NULL" << std::endl;
                 }
             }
 
