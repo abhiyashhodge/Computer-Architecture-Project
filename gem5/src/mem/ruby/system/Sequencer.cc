@@ -929,6 +929,7 @@ namespace gem5
                         std::cout << "SPEC UPDATE SQUASHED: updated isPrefetch" << std::endl;
 
                         // (5) we remove the stored entry
+                        delete victim_entry;
                         VictimCache.erase(it);
                         
                         std::cout << "SPEC UPDATE SQUASHED: restored victim entry successfully!" << std::endl;
@@ -948,6 +949,7 @@ namespace gem5
                     else
                     {
                         // (4) we remove the stored entry
+                        delete it->second.l1CacheEntry;
                         VictimCache.erase(it);
                     }
                 }
@@ -1011,11 +1013,11 @@ namespace gem5
                 {
                     // Store the initial value of the cache entry
                     // If it is replaced after squashing the speculative load, we know to restore the original value
-                    L1Cache_Entry l1Cache_Entry_copy = *l1Cache_Entry;
+                    L1Cache_Entry* l1Cache_Entry_copy = l1Cache_Entry->clone();
                     // Print copy to make sure copy-constructor is working
                     l1Cache_Entry_copy.print(std::cout);
                     SpeculativeRequest req = {
-                        &l1Cache_Entry_copy,
+                        l1Cache_Entry_copy,
                         SpeculativeRequestStatus::Issued};
                     VictimCache.insert(std::pair<Addr, SpeculativeRequest>(msg->m_LineAddress, req));
                 }
