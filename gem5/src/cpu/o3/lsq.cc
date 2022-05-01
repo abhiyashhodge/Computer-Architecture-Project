@@ -407,6 +407,10 @@ LSQ::recvTimingResp(PacketPtr pkt)
     LSQRequest *request = dynamic_cast<LSQRequest*>(pkt->senderState);
     panic_if(!request, "Got packet back with unknown sender state\n");
 
+    if(pkt->isSpecCommited() || pkt->isSpecSquashed()){
+        return true;
+    }
+
     thread[cpu->contextToThread(request->contextId())].recvTimingResp(pkt);
 
     if (pkt->isInvalidate()) {
