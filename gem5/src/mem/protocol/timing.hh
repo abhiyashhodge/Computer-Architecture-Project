@@ -187,7 +187,7 @@ class TimingResponseProtocol
     /**
      * Receive a timing snoop response from the peer.
      */
-    virtual bool recvTimingSnoopResp(PacketPtr pkt) = 0;
+    virtual bool recvTimingSnoopResp(PacketPtr pkt) = {return true;};
 
     /**
      * Called by the peer if sendTimingResp was called on this
