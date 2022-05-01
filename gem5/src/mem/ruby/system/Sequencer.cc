@@ -918,7 +918,7 @@ namespace gem5
                         SpeculativeRequest spec_req = it->second;
                         L1Cache_Entry *victim_entry = (L1Cache_Entry *)spec_req.l1CacheEntry;
                         std::cout << "SPEC UPDATE SQUASHED: victim entry: " << std::endl;
-                        victim_entry->print(std::cout)
+                        victim_entry->print(std::cout);
                         l1Cache_Entry->setCacheState(victim_entry->getCacheState());
                         std::cout << "SPEC UPDATE SQUASHED: updated cache state" << std::endl;
                         l1Cache_Entry->setDataBlk(victim_entry->getDataBlk());
