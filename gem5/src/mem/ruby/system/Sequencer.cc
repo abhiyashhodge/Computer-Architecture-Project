@@ -913,13 +913,19 @@ namespace gem5
                     }
                     else
                     {
+                        std::cout << "SPEC UPDATE SQUASHED: we have a stored entry for this line" << std::endl;
                         // (4) we restore the victim cache entry
                         SpeculativeRequest spec_req = it->second;
                         L1Cache_Entry *victim_entry = (L1Cache_Entry *)spec_req.l1CacheEntry;
+                        std::cout << "SPEC UPDATE SQUASHED: victim entry: " << victim_entry->print(std::cout) << std::endl;
                         l1Cache_Entry->setCacheState(victim_entry->getCacheState());
+                        std::cout << "SPEC UPDATE SQUASHED: updated cache state" << std::endl;
                         l1Cache_Entry->setDataBlk(victim_entry->getDataBlk());
+                        std::cout << "SPEC UPDATE SQUASHED: updated data block" << std::endl;
                         l1Cache_Entry->setDirty(victim_entry->getDirty());
+                        std::cout << "SPEC UPDATE SQUASHED: updated dirty" << std::endl;
                         l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch());
+                        std::cout << "SPEC UPDATE SQUASHED: updated isPrefetch" << std::endl;
 
                         // (5) we remove the stored entry
                         VictimCache.erase(it);
