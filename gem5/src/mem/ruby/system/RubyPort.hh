@@ -96,7 +96,9 @@ class RubyPort : public ClockedObject
         // [Revice] This is where packets go from the CPU to the memory portion
         bool recvTimingReq(PacketPtr pkt);
 
+        public:
         void recvSpecLoadUpdate(PacketPtr pkt);
+        protected:
 
         Tick recvAtomic(PacketPtr pkt);
 
