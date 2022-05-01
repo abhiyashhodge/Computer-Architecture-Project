@@ -1030,8 +1030,9 @@ LSQ::SplitDataRequest::initiateTranslation()
 }
 
 LSQ::LSQRequest::LSQRequest(
-        LSQUnit *port, const DynInstPtr& inst, bool isLoad) :
-    _state(State::NotIssued),
+       // LSQUnit *port, const DynInstPtr& inst, bool isLoad) :
+        LSQUnit *port, const DynInstPtr& inst, bool isLoad, bool isSpec) :
+    	_state(State::NotIssued),
     _port(*port), _inst(inst), _data(nullptr),
     _res(nullptr), _addr(0), _size(0), _flags(0),
     _numOutstandingPackets(0), _amo_op(nullptr)
