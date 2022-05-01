@@ -57,7 +57,7 @@ namespace gem5
     }
 
     void
-    sendSpecLoadUpdateReq(TimingResponseProtocol *peer,
+    TimingRequestProtocol::sendSpecLoadUpdateReq(TimingResponseProtocol *peer,
                       PacketPtr pkt)
     {
         std::cout << "TimingResponseProtocol::sendSpecLoadUpdateReq" << std::endl;
