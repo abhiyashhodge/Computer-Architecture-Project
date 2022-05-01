@@ -923,6 +923,8 @@ namespace gem5
 
                         // (5) we remove the stored entry
                         VictimCache.erase(it);
+                        
+                        std::cout << "SPEC UPDATE SQUASHED: restored victim entry successfully!" << std::endl;
                     }
                 }
                 else
