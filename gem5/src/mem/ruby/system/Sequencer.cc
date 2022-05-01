@@ -1015,7 +1015,7 @@ namespace gem5
                     // If it is replaced after squashing the speculative load, we know to restore the original value
                     L1Cache_Entry* l1Cache_Entry_copy = l1Cache_Entry->clone();
                     // Print copy to make sure copy-constructor is working
-                    l1Cache_Entry_copy->print(std::cout);
+                    // l1Cache_Entry_copy->print(std::cout);
                     SpeculativeRequest req = {
                         l1Cache_Entry_copy,
                         SpeculativeRequestStatus::Issued};
