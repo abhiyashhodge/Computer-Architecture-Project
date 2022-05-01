@@ -789,18 +789,18 @@ namespace gem5
             if (loadQueue.back().request() == NULL)
             {
                 // TODO: what causes a NULL request?
-                std::cout << "[Commit Load] loadQueue.back().request() is NULL" << std::endl;
+                std::cout << "[Commit] loadQueue.back().request() is NULL" << std::endl;
             }
             else
             {
-                std::cout << "Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
+                std::cout << "[Commit] Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
                 // This seems unnecessary, since all requests have either 0 or 1 packets.
                 for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++)
                 {
                     PacketPtr pkt = loadQueue.back().request()->_packets[i];
                     if (!pkt->isRequest() || !pkt->isSpecLoad())
                     {
-                        std::cout << "Packet is not a spec-load request" << std::endl;
+                        std::cout << "[Commit] Packet is not a spec-load request" << std::endl;
                         continue;
                     }
                     // change packet status to squashed and send it as another timing request
@@ -1054,18 +1054,18 @@ namespace gem5
                 if (loadQueue.back().request() == NULL)
                 {
                     // TODO: what causes a NULL request?
-                    std::cout << "loadQueue.back().request() is NULL" << std::endl;
+                    std::cout << "[Squash] loadQueue.back().request() is NULL" << std::endl;
                 }
                 else
                 {
-                    std::cout << "Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
+                    std::cout << "[Squash] Packets in LQ.back() request: " << loadQueue.back().request()->_packets.size() << std::endl;
                     // This seems unnecessary, since all requests have either 0 or 1 packets.
                     for (int i = 0; i < loadQueue.back().request()->_packets.size(); i++)
                     {
                         PacketPtr pkt = loadQueue.back().request()->_packets[i];
                         if (!pkt->isRequest() || !pkt->isSpecLoad())
                         {
-                            std::cout << "Packet is not a spec-load request" << std::endl;
+                            std::cout << "[Squash] Packet is not a spec-load request" << std::endl;
                             continue;
                         }
                         // change packet status to squashed and send it as another timing request
