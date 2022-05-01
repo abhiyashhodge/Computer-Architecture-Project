@@ -970,7 +970,7 @@ namespace gem5
                     // we do not have a stored entry for this line
                     std::cout << "SPEC UPDATE COMMMITED: removing stored entry" << std::endl;
                     // (4) we remove the stored entry
-                    delete it->second.l1CacheEntry;
+                    // delete it->second.l1CacheEntry;
                     VictimCache.erase(it);
                 } else {
                     std::cout << "SPEC UPDATE COMMITED: no stored entry for this line" << std::endl;
@@ -1031,7 +1031,6 @@ namespace gem5
                     // Store the initial value of the cache entry
                     // If it is replaced after squashing the speculative load, we know to restore the original value
                     L1Cache_Entry *l1Cache_Entry_copy = l1Cache_Entry->clone();
-                    std::cout << "Pointers are the same: " << (l1Cache_Entry == l1Cache_Entry_copy) << std::endl;
                     // Print copy to make sure copy-constructor is working
                     // l1Cache_Entry_copy->print(std::cout);
                     SpeculativeRequest req = {
