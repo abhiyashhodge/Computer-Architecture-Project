@@ -67,6 +67,9 @@ class TimingRequestProtocol
      */
     bool sendReq(TimingResponseProtocol *peer, PacketPtr pkt);
 
+    void sendSpecLoadUpdateReq(TimingResponseProtocol *peer,
+                           PacketPtr pkt);
+
     /**
      * Check if the peer can handle a timing request.
      *

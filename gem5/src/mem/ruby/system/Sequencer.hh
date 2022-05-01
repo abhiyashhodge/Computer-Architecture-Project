@@ -140,6 +140,7 @@ class Sequencer : public RubyPort
                       const Cycles firstResponseTime = Cycles(0));
 
     RequestStatus makeRequest(PacketPtr pkt) override;
+    void makeSpecLoadUpdate(PacketPtr pkt);
     virtual bool empty() const;
     int outstandingCount() const override { return m_outstanding_count; }
 

@@ -890,6 +890,11 @@ namespace gem5
             return RequestStatus_Issued;
         }
 
+        void 
+        Sequencer::makeSpecLoadUpdate(PacketPtr pkt){
+            std::cout << "SEQUENCER SPEC LOAD UPDATE" << std::endl;
+        }
+
         void
         Sequencer::issueRequest(PacketPtr pkt, RubyRequestType secondary_type)
         {

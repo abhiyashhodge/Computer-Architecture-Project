@@ -43,67 +43,77 @@
 namespace gem5
 {
 
-/* The request protocol. */
+    /* The request protocol. */
 
-bool
-TimingRequestProtocol::sendReq(TimingResponseProtocol *peer, PacketPtr pkt)
-{
-    if(!pkt->isRequest()){
-        pkt->print();
+    bool
+    TimingRequestProtocol::sendReq(TimingResponseProtocol *peer, PacketPtr pkt)
+    {
+        if (!pkt->isRequest())
+        {
+            pkt->print();
+        }
+        assert(pkt->isRequest());
+        return peer->recvTimingReq(pkt);
     }
-    assert(pkt->isRequest());
-    return peer->recvTimingReq(pkt);
-}
 
-bool
-TimingRequestProtocol::trySend(
+    void
+    sendSpecLoadUpdateReq(TimingResponseProtocol *peer,
+                      PacketPtr pkt)
+    {
+        std::cout << "TimingResponseProtocol::sendSpecLoadUpdateReq" << std::endl;
+        assert(pkt->isRequest());
+        peer->recvSpecLoadUpdate(pkt);
+    }
+
+    bool
+    TimingRequestProtocol::trySend(
         TimingResponseProtocol *peer, PacketPtr pkt) const
-{
-  assert(pkt->isRequest());
-  return peer->tryTiming(pkt);
-}
+    {
+        assert(pkt->isRequest());
+        return peer->tryTiming(pkt);
+    }
 
-bool
-TimingRequestProtocol::sendSnoopResp(
+    bool
+    TimingRequestProtocol::sendSnoopResp(
         TimingResponseProtocol *peer, PacketPtr pkt)
-{
-    assert(pkt->isResponse());
-    return peer->recvTimingSnoopResp(pkt);
-}
+    {
+        assert(pkt->isResponse());
+        return peer->recvTimingSnoopResp(pkt);
+    }
 
-void
-TimingRequestProtocol::sendRetryResp(TimingResponseProtocol *peer)
-{
-    peer->recvRespRetry();
-}
+    void
+    TimingRequestProtocol::sendRetryResp(TimingResponseProtocol *peer)
+    {
+        peer->recvRespRetry();
+    }
 
-/* The response protocol. */
+    /* The response protocol. */
 
-bool
-TimingResponseProtocol::sendResp(TimingRequestProtocol *peer, PacketPtr pkt)
-{
-    assert(pkt->isResponse());
-    return peer->recvTimingResp(pkt);
-}
+    bool
+    TimingResponseProtocol::sendResp(TimingRequestProtocol *peer, PacketPtr pkt)
+    {
+        assert(pkt->isResponse());
+        return peer->recvTimingResp(pkt);
+    }
 
-void
-TimingResponseProtocol::sendSnoopReq(
+    void
+    TimingResponseProtocol::sendSnoopReq(
         TimingRequestProtocol *peer, PacketPtr pkt)
-{
-    assert(pkt->isRequest());
-    peer->recvTimingSnoopReq(pkt);
-}
+    {
+        assert(pkt->isRequest());
+        peer->recvTimingSnoopReq(pkt);
+    }
 
-void
-TimingResponseProtocol::sendRetryReq(TimingRequestProtocol *peer)
-{
-    peer->recvReqRetry();
-}
+    void
+    TimingResponseProtocol::sendRetryReq(TimingRequestProtocol *peer)
+    {
+        peer->recvReqRetry();
+    }
 
-void
-TimingResponseProtocol::sendRetrySnoopResp(TimingRequestProtocol *peer)
-{
-    peer->recvRetrySnoopResp();
-}
+    void
+    TimingResponseProtocol::sendRetrySnoopResp(TimingRequestProtocol *peer)
+    {
+        peer->recvRetrySnoopResp();
+    }
 
 } // namespace gem5

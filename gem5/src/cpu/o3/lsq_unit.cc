@@ -969,6 +969,7 @@ LSQUnit::squash(const InstSeqNum &squashed_num)
                 // change packet status to squashed and send it as another timing request
                 pkt->_specIssueState = Packet::SpecIssueState::SQUASHED;
                 //loadQueue.back().request()->packetClearSendFlags();
+                dcachePort->sendSpecLoadUpdateReq(pkt);
                 // while(trySendPacket(true, pkt) == false){
                 //     std::cout << "trySendPacket failed on load squash" << std::endl;
                 // }
