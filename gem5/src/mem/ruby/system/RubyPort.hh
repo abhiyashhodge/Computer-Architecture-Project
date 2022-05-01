@@ -91,14 +91,11 @@ class RubyPort : public ClockedObject
                      PortID id, bool _no_retry_on_stall);
         void hitCallback(PacketPtr pkt);
         void evictionCallback(Addr address);
+        void recvSpecLoadUpdate(PacketPtr pkt);
 
       protected:
         // [Revice] This is where packets go from the CPU to the memory portion
         bool recvTimingReq(PacketPtr pkt);
-
-        public:
-        void recvSpecLoadUpdate(PacketPtr pkt);
-        protected:
 
         Tick recvAtomic(PacketPtr pkt);
 
