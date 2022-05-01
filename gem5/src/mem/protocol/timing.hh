@@ -172,6 +172,11 @@ class TimingResponseProtocol
     virtual bool recvTimingReq(PacketPtr pkt) = 0;
 
     /**
+     * Receive a speculative load update from the peer.
+     */
+    virtual void recvSpecLoadUpdate(PacketPtr pkt) = 0;
+
+    /**
      * Availability request from the peer.
      */
     virtual bool tryTiming(PacketPtr pkt) = 0;

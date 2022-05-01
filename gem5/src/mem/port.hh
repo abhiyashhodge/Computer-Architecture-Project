@@ -175,7 +175,7 @@ namespace gem5
          * @return If the send was succesful or not.
          */
         bool sendTimingReq(PacketPtr pkt);
-        
+
         void sendSpecLoadUpdateReq(PacketPtr pkt);
 
         /**
