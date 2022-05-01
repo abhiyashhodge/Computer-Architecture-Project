@@ -1163,6 +1163,8 @@ IEW::executeInsts()
         DPRINTF(IEW, "Execute: Processing PC %s, [tid:%i] [sn:%llu].\n",
                 inst->pcState(), inst->threadNumber,inst->seqNum);
 
+        DPRINTF(IEW, "Execute: Instruction is %s.\n",
+                inst->isNonSpeculative() ? "nonspeculative" : "speculative");
         // Notify potential listeners that this instruction has started
         // executing
         ppExecute->notify(inst);
