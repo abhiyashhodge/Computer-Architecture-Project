@@ -165,7 +165,7 @@ class RubyPort : public ClockedObject
                   PortID idx=InvalidPortID) override;
 
     virtual RequestStatus makeRequest(PacketPtr pkt) = 0;
-    virtual void recvSpecLoadUpdate(PacketPtr pkt) = 0;
+    virtual void makeSpecLoadUpdate(PacketPtr pkt) = 0;
     virtual int outstandingCount() const = 0;
     virtual bool isDeadlockEventScheduled() const = 0;
     virtual void descheduleDeadlockEvent() = 0;
