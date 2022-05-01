@@ -919,7 +919,7 @@ namespace gem5
                         l1Cache_Entry->setCacheState(victim_entry->getCacheState());
                         l1Cache_Entry->setDataBlk(victim_entry->getDataBlk());
                         l1Cache_Entry->setDirty(victim_entry->getDirty());
-                        l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch()());
+                        l1Cache_Entry->setisPrefetch(victim_entry->getisPrefetch());
 
                         // (5) we remove the stored entry
                         VictimCache.erase(it);
