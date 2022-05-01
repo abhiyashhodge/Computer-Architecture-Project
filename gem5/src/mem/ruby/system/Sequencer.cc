@@ -742,7 +742,6 @@ namespace gem5
         RequestStatus
         Sequencer::makeRequest(PacketPtr pkt)
         {
-            assert(false);
             DPRINTF(RubySequencer, "Making Request %s\n", pkt->cmdString());
             // HTM abort signals must be allowed to reach the Sequencer
             // the same cycle they are issued. They cannot be retried.
