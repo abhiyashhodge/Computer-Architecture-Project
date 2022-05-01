@@ -175,6 +175,8 @@ namespace gem5
          * @return If the send was succesful or not.
          */
         bool sendTimingReq(PacketPtr pkt);
+        
+        void sendSpecLoadUpdateReq(PacketPtr pkt);
 
         /**
          * Check if the responder can handle a timing request.
@@ -531,7 +533,7 @@ namespace gem5
         }
     }
 
-    inline bool
+    inline void
     RequestPort::sendSpecLoadUpdateReq(PacketPtr pkt)
     {
         std::cout << "RequestPort::sendSpecLoadUpdateReq()" << std::endl;
