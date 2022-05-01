@@ -904,7 +904,7 @@ namespace gem5
                 if (l1Cache_Entry != NULL)
                 {
                     // (3) we check if we have a stored victimized entry
-                    std::map<char, int>::iterator it;
+                    std::map<Addr, SpeculativeRequest>::iterator it;
                     it = VictimCache.find(line_addr);
                     if (it == VictimCache.end())
                     {
@@ -931,7 +931,7 @@ namespace gem5
                 {
                     // (3) we do not have a L1 cache entry for this line
                     std::cout << "SPEC UPDATE SQUASHED: no L1 cache entry for this line" << std::endl;
-                    std::map<char, int>::iterator it;
+                    std::map<Addr, SpeculativeRequest>::iterator it;
                     it = VictimCache.find(line_addr);
                     if (it != VictimCache.end())
                     {
