@@ -175,7 +175,7 @@ class TimingResponseProtocol
     /**
      * Receive a speculative load update from the peer.
      */
-    void recvSpecLoadUpdate(PacketPtr pkt);
+    virtual void recvSpecLoadUpdate(PacketPtr pkt) {};
 
     protected:
 
