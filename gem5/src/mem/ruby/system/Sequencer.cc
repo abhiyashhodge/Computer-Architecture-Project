@@ -972,6 +972,8 @@ namespace gem5
                     // (4) we remove the stored entry
                     delete it->second.l1CacheEntry;
                     VictimCache.erase(it);
+                } else {
+                    std::cout << "SPEC UPDATE COMMITED: no stored entry for this line" << std::endl;
                 }
             }
             else
