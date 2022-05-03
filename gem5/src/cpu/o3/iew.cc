@@ -1163,6 +1163,9 @@ IEW::executeInsts()
         DPRINTF(IEW, "Execute: Processing PC %s, [tid:%i] [sn:%llu].\n",
                 inst->pcState(), inst->threadNumber,inst->seqNum);
 
+        DPRINTF(IEW, "Execute: Instruction is %s.\n",
+                inst->isNonSpeculative() ? "nonspeculative" : "speculative");
+
         // Notify potential listeners that this instruction has started
         // executing
         ppExecute->notify(inst);
@@ -1212,6 +1215,7 @@ IEW::executeInsts()
             } else if (inst->isLoad()) {
                 // Loads will mark themselves as executed, and their writeback
                 // event adds the instruction to the queue to commit
+                DPRINTF(IEW, "Execute: Executing load.\n");
                 fault = ldstQueue.executeLoad(inst);
 
                 if (inst->isTranslationDelayed() &&

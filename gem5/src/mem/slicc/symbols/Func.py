@@ -40,6 +40,10 @@ class Func(Symbol):
         self.c_ident = ident
         self.c_name = name
         self.class_name = ""
+        if "public" in self:
+            self.public = True
+        else:
+            self.public = False
 
     def __repr__(self):
         return ""
@@ -56,7 +60,11 @@ class Func(Symbol):
         elif "return_by_pointer" in self and self.return_type != void_type:
             return_type += "*"
 
-        return "%s %s(%s);" % (return_type, self.c_name,
+        if self.public:
+            return "public:\n%s %s(%s);\nprivate:\n" % (return_type, self.c_name,
+                               ", ".join(self.param_strings))
+        else:
+            return "%s %s(%s);" % (return_type, self.c_name,
                                ", ".join(self.param_strings))
 
     def writeCodeFiles(self, path, includes):

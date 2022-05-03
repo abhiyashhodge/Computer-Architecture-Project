@@ -407,6 +407,10 @@ LSQ::recvTimingResp(PacketPtr pkt)
     LSQRequest *request = dynamic_cast<LSQRequest*>(pkt->senderState);
     panic_if(!request, "Got packet back with unknown sender state\n");
 
+    if(pkt->isSpecCommited() || pkt->isSpecSquashed()){
+        return true;
+    }
+
     thread[cpu->contextToThread(request->contextId())].recvTimingResp(pkt);
 
     if (pkt->isInvalidate()) {
@@ -794,10 +798,10 @@ LSQ::pushRequest(const DynInstPtr& inst, bool isLoad, uint8_t *data,
             assert(size == 8);
             request = new HtmCmdRequest(&thread[tid], inst, flags);
         } else if (needs_burst) {
-            request = new SplitDataRequest(&thread[tid], inst, isLoad, addr,
+            request = new SplitDataRequest(&thread[tid], inst, isLoad, !inst->isNonSpeculative(), addr,
                     size, flags, data, res);
         } else {
-            request = new SingleDataRequest(&thread[tid], inst, isLoad, addr,
+            request = new SingleDataRequest(&thread[tid], inst, isLoad, !inst->isNonSpeculative(), addr,
                     size, flags, data, res, std::move(amo_op));
         }
         assert(request);
@@ -1030,13 +1034,14 @@ LSQ::SplitDataRequest::initiateTranslation()
 }
 
 LSQ::LSQRequest::LSQRequest(
-        LSQUnit *port, const DynInstPtr& inst, bool isLoad) :
+        LSQUnit *port, const DynInstPtr& inst, bool isLoad, bool isSpec) :
     _state(State::NotIssued),
     _port(*port), _inst(inst), _data(nullptr),
     _res(nullptr), _addr(0), _size(0), _flags(0),
     _numOutstandingPackets(0), _amo_op(nullptr)
 {
     flags.set(Flag::IsLoad, isLoad);
+    flags.set(Flag::IsSpec, isSpec);
     flags.set(Flag::WriteBackToRegister,
               _inst->isStoreConditional() || _inst->isAtomic() ||
               _inst->isLoad());
@@ -1045,7 +1050,7 @@ LSQ::LSQRequest::LSQRequest(
 }
 
 LSQ::LSQRequest::LSQRequest(
-        LSQUnit *port, const DynInstPtr& inst, bool isLoad,
+        LSQUnit *port, const DynInstPtr& inst, bool isLoad, bool isSpec,
         const Addr& addr, const uint32_t& size, const Request::Flags& flags_,
            PacketDataPtr data, uint64_t* res, AtomicOpFunctorPtr amo_op)
     : _state(State::NotIssued),
@@ -1058,6 +1063,7 @@ LSQ::LSQRequest::LSQRequest(
     _amo_op(std::move(amo_op))
 {
     flags.set(Flag::IsLoad, isLoad);
+    flags.set(Flag::IsSpec, isSpec);
     flags.set(Flag::WriteBackToRegister,
               _inst->isStoreConditional() || _inst->isAtomic() ||
               _inst->isLoad());
@@ -1156,12 +1162,20 @@ LSQ::SingleDataRequest::buildPackets()
 {
     /* Retries do not create new packets. */
     if (_packets.size() == 0) {
-        _packets.push_back(
-                isLoad()
-                    ?  Packet::createRead(req())
-                    :  Packet::createWrite(req()));
+        // [Revice] change type of packet pushed based on spec/non-spec
+        if(isLoad()){
+            if(_inst->isNonSpeculative()){
+                _packets.push_back(Packet::createRead(req()));
+            } else {
+                _packets.push_back(Packet::createReadSpec(req()));
+            }
+            // _packets.push_back(Packet::createRead(req()));
+        } else {
+            _packets.push_back(Packet::createWrite(req()));
+        }
         _packets.back()->dataStatic(_inst->memData);
         _packets.back()->senderState = this;
+
 
         // hardware transactional memory
         // If request originates in a transaction (not necessarily a HtmCmd),
@@ -1192,7 +1206,8 @@ LSQ::SplitDataRequest::buildPackets()
     if (_packets.size() == 0) {
         /* New stuff */
         if (isLoad()) {
-            _mainPacket = Packet::createRead(_mainReq);
+            _mainPacket = _inst->isNonSpeculative() ? Packet::createRead(_mainReq) : Packet::createReadSpec(_mainReq);
+            // _mainPacket = Packet::createRead(_mainReq);
             _mainPacket->dataStatic(_inst->memData);
 
             // hardware transactional memory
@@ -1362,7 +1377,7 @@ LSQ::DcachePort::recvReqRetry()
 
 LSQ::HtmCmdRequest::HtmCmdRequest(LSQUnit* port, const DynInstPtr& inst,
         const Request::Flags& flags_) :
-    SingleDataRequest(port, inst, true, 0x0lu, 8, flags_,
+    SingleDataRequest(port, inst, true, !inst->isNonSpeculative(), 0x0lu, 8, flags_,
         nullptr, nullptr, nullptr)
 {
 }

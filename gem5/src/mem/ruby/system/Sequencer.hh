@@ -53,6 +53,7 @@
 #include "mem/ruby/system/RubyPort.hh"
 #include "params/RubySequencer.hh"
 
+
 namespace gem5
 {
 
@@ -89,6 +90,18 @@ class Sequencer : public RubyPort
     typedef RubySequencerParams Params;
     Sequencer(const Params &);
     ~Sequencer();
+
+
+    // [Revice] Setup our victim cache, a map of line addresses to requests
+    typedef enum {Issued, Squashed, Commited} SpeculativeRequestStatus;
+    struct SpeculativeRequest
+    {
+      AbstractCacheEntry* l1CacheEntry;
+      SpeculativeRequestStatus status; 
+    };
+    // Victim cache
+    std::map<Addr, SpeculativeRequest> VictimCache;
+    
 
     /**
      * Proxy function to writeCallback that first
@@ -127,6 +140,7 @@ class Sequencer : public RubyPort
                       const Cycles firstResponseTime = Cycles(0));
 
     RequestStatus makeRequest(PacketPtr pkt) override;
+    void makeSpecLoadUpdate(PacketPtr pkt);
     virtual bool empty() const;
     int outstandingCount() const override { return m_outstanding_count; }
 
