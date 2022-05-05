@@ -1165,6 +1165,10 @@ IEW::executeInsts()
 
         DPRINTF(IEW, "Execute: Instruction is %s.\n",
                 inst->isNonSpeculative() ? "nonspeculative" : "speculative");
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/master
         // Notify potential listeners that this instruction has started
         // executing
         ppExecute->notify(inst);
@@ -1214,6 +1218,7 @@ IEW::executeInsts()
             } else if (inst->isLoad()) {
                 // Loads will mark themselves as executed, and their writeback
                 // event adds the instruction to the queue to commit
+                DPRINTF(IEW, "Execute: Executing load.\n");
                 fault = ldstQueue.executeLoad(inst);
 
                 if (inst->isTranslationDelayed() &&

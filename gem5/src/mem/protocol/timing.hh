@@ -67,6 +67,9 @@ class TimingRequestProtocol
      */
     bool sendReq(TimingResponseProtocol *peer, PacketPtr pkt);
 
+    void sendSpecLoadUpdateReq(TimingResponseProtocol *peer,
+                           PacketPtr pkt);
+
     /**
      * Check if the peer can handle a timing request.
      *
@@ -126,6 +129,12 @@ class TimingResponseProtocol
 {
     friend class TimingRequestProtocol;
 
+  public:
+    /**
+     * Receive a speculative load update from the peer.
+     */
+    virtual void recvSpecLoadUpdate(PacketPtr pkt) {};
+
   protected:
     /**
      * Attempt to send a timing response to the peer by calling
@@ -168,6 +177,7 @@ class TimingResponseProtocol
      */
     virtual bool recvTimingReq(PacketPtr pkt) = 0;
 
+  
     /**
      * Availability request from the peer.
      */

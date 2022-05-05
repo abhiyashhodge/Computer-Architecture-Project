@@ -318,6 +318,13 @@ RubyPort::MemResponsePort::recvTimingReq(PacketPtr pkt)
     return false;
 }
 
+void 
+RubyPort::MemResponsePort::recvSpecLoadUpdate(PacketPtr pkt){
+    std::cout << "RubyPort::MemResponsePort::recvSpecLoadUpdate" << std::endl;
+    RubyPort *ruby_port = static_cast<RubyPort *>(&owner);
+    ruby_port->makeSpecLoadUpdate(pkt);
+}
+
 Tick
 RubyPort::MemResponsePort::recvAtomic(PacketPtr pkt)
 {
