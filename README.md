@@ -1,5 +1,5 @@
 # Recreating Revice: CSCE 614 Term Project
-This term project for CSCE 614: Computer Architecture is an attempt to recreate the solution to Spectre and Meltdwon attacls as presented in *ReViCe: Reusing Victim Cache to Prevent Speculative Cache Leakage* by Kim et al. (2020).
+This term project for CSCE 614: Computer Architecture is an attempt to recreate the solution to Spectre and Meltdown attacls as presented in *ReViCe: Reusing Victim Cache to Prevent Speculative Cache Leakage* by Kim et al. (2020).
 
 ## Team Members
 
