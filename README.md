@@ -1,5 +1,5 @@
 # Recreating Revice: CSCE 614 Term Project
-This term project for CSCE 614: Computer Architecture is an attempt to recreate the solution to Spectre and Meltdown attacls as presented in *ReViCe: Reusing Victim Cache to Prevent Speculative Cache Leakage* by Kim et al. (2020).
+This term project for CSCE 614: Computer Architecture is an attempt to recreate the solution to Spectre and Meltdown attacks as presented in *ReViCe: Reusing Victim Cache to Prevent Speculative Cache Leakage* by Kim et al. (2020).
 
 ## Team Members
 
@@ -59,7 +59,7 @@ else:
 	return "%s %s(%s);" % (return_type, self.c_name,
 ```
 
-## Evaluation
+## Evaluation (Run Command)
 
 This code was tested with a set of 10 simple binaries of compiled C programs, since the implementation falls short in its ability to actually mitigate Spectre or Meltdown attacks, despite being a good set of steps in the correct direction. As such, the command used to observe working code changes was:
 ```
@@ -70,4 +70,4 @@ This code was tested with a set of 10 simple binaries of compiled C programs, si
 We used the standard Gem5 build process using scons. We built the simulator for X86 with the `j9` flag set.
 
 ## Output
-During the running of a given binary, you may observe messages indicating that a specualtive load has been recieved at the Sequencer, and when loads are either quashed or commited when entries in the victim cache are restored or removed.
+After building and running the Gem5 simulator with our changes, we can observe the logs on the terminal which indicate victim cache is getting updated when the program encounters speculative loads or instructions. Also, if we check the sequencer file in the Gem5 codebase, we can see the change in the state of Victim cache and it is updated with data as desired.
