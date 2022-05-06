@@ -68,3 +68,6 @@ This code was tested with a set of 10 simple binaries of compiled C programs, si
 
 ## Building
 We used the standard Gem5 build process using scons. We built the simulator for X86 with the `j9` flag set.
+
+## Output
+During the running of a given binary, you may observe messages indicating that a specualtive load has been recieved at the Sequencer, and when loads are either quashed or commited when entries in the victim cache are restored or removed.
